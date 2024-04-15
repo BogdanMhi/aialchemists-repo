@@ -15,7 +15,7 @@ data "archive_file" "zip" {
 resource "google_storage_bucket_object" "sourcecode" {
   name = format(
     "%s#%s",
-    "assets/mage_handler.zip",
+    "image_handler/function-source.zip",
     data.archive_file.zip.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
@@ -40,10 +40,11 @@ resource "google_cloudfunctions2_function" "image_handler" {
     source {
       storage_source {
         bucket = "gcf-v2-sources-957891796445-europe-west3"
-        object = "image_handler/function-source.zip"
+        object = google_storage_bucket_object.sourcecode.name
       }
     }
   }
+
   service_config {
     max_instance_count = 350
     available_memory   = "4G"
@@ -59,6 +60,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
     retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
   }
 
+  depends_on = [google_storage_bucket_object.sourcecode]
   # lifecycle {
   #   replace_triggered_by = [google_storage_bucket_object.sourcecode]
   # }
