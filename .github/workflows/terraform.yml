@@ -40,7 +40,7 @@ jobs:
           #!/bin/bash
       
           # Define the directory containing your cloud functions
-          CLOUD_FUNCTIONS_DIR="/cloud_functions"
+          CLOUD_FUNCTIONS_DIR="../../cloud_functions"
       
           # Loop through each directory inside cloud_functions
           for FUNCTION_DIR in "$CLOUD_FUNCTIONS_DIR"/*/; do
@@ -48,7 +48,7 @@ jobs:
             FUNCTION_NAME=$(basename "$FUNCTION_DIR")
       
             # Create a ZIP file for each directory
-            zip -r "/assets/${FUNCTION_NAME}.zip" "${FUNCTION_DIR}"*
+            zip -r "../../assets/${FUNCTION_NAME}.zip" "${FUNCTION_DIR}"*
           done
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
