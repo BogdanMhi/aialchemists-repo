@@ -15,11 +15,11 @@ data "archive_file" "zip" {
 resource "google_storage_bucket_object" "sourcecode" {
   name = format(
     "%s#%s",
-    "/tmp/assets/mage_handler.zip",
+    "assets/mage_handler.zip",
     data.archive_file.zip.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = "/tmp/assets/image_handler.zip" # Add path to the zipped function source code
+  source = "assets/image_handler.zip" # Add path to the zipped function source code
 }
 
 ## to_pdf_converter
