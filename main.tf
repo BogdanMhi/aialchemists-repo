@@ -6,17 +6,20 @@ resource "google_storage_bucket" "my_bucket" {
   public_access_prevention = "enforced"
 }
 
-# data "archive_file" "zip" {
-#   type        = "zip"
-#   source_dir  = "cloud_functions/image_handler"
-#   output_path = "assets/mage_handler.zip"
-# }
+data "archive_file" "zip" {
+  type        = "zip"
+  source_dir  = "cloud_functions/image_handler"
+  output_path = "assets/image_handler.zip"
+}
 
 resource "google_storage_bucket_object" "sourcecode" {
-  name   = "image_handler/function-source.zip"
+  name   = format(
+              "%s#%s",
+              "assets/mage_handler.zip",
+              data.archive_file.sourcecode.output_md5
+            )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
   source = "assets/image_handler.zip" # Add path to the zipped function source code
-  # description = data.archive_file.zip.md5 != data.google_storage_bucket_object.sourcecode.md5 ? data.archive_file.zip.md5 : null
 }
 
 ## to_pdf_converter
@@ -56,7 +59,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
     retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
   }
 
-  lifecycle {
-    replace_triggered_by = [google_storage_bucket_object.sourcecode]
-  }
+  # lifecycle {
+  #   replace_triggered_by = [google_storage_bucket_object.sourcecode]
+  # }
 }
