@@ -1,3 +1,12 @@
+terraform {
+  required_version = ">= 0.13"
+
+  backend "gcs" {
+    bucket = "tf_state_8d85fe"
+    prefix = "terraform/state"
+  }
+}
+
 resource "google_storage_bucket" "my_bucket" {
   name                     = "ingestion_data_bucket"
   project                  = "docai-accelerator"
@@ -5,6 +14,30 @@ resource "google_storage_bucket" "my_bucket" {
   force_destroy            = false
   public_access_prevention = "enforced"
 }
+
+# ## DEV
+# resource "google_storage_bucket" "state_infra_dev" {
+#   name                        = "tf_state_8d85fe"
+#   project                     = "docai-accelerator"
+#   storage_class               = "STANDARD"
+#   location                    = "europe-west3"
+#   uniform_bucket_level_access = true
+
+#   versioning {
+#     enabled = true
+#   }
+
+#   lifecycle_rule {
+#     condition {
+#       num_newer_versions = 3
+#     }
+#     action {
+#       type = "Delete"
+#     }
+#   }
+# }
+
+
 
 data "archive_file" "zip" {
   type        = "zip"
