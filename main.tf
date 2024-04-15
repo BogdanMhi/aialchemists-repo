@@ -15,30 +15,6 @@ resource "google_storage_bucket" "my_bucket" {
   public_access_prevention = "enforced"
 }
 
-# ## DEV
-# resource "google_storage_bucket" "state_infra_dev" {
-#   name                        = "tf_state_8d85fe"
-#   project                     = "docai-accelerator"
-#   storage_class               = "STANDARD"
-#   location                    = "europe-west3"
-#   uniform_bucket_level_access = true
-
-#   versioning {
-#     enabled = true
-#   }
-
-#   lifecycle_rule {
-#     condition {
-#       num_newer_versions = 3
-#     }
-#     action {
-#       type = "Delete"
-#     }
-#   }
-# }
-
-
-
 data "archive_file" "zip" {
   type        = "zip"
   source_dir  = "cloud_functions/image_handler"
@@ -55,7 +31,7 @@ resource "google_storage_bucket_object" "sourcecode" {
   source = "assets/image_handler.zip" # Add path to the zipped function source code
 }
 
-## to_pdf_converter
+## image_handler
 resource "google_cloudfunctions2_function" "image_handler" {
   location = "europe-west3"
   name     = "image_handler"
@@ -69,7 +45,6 @@ resource "google_cloudfunctions2_function" "image_handler" {
   build_config {
     runtime     = "python38"
     entry_point = "image_handler"
-    # docker_repository                        = "projects/docai-accelerator/locations/${var.region}/repositories/${var.cloudfunctions_artifactstorage_name}"
     source {
       storage_source {
         bucket = "gcf-v2-sources-957891796445-europe-west3"
@@ -94,7 +69,4 @@ resource "google_cloudfunctions2_function" "image_handler" {
   }
 
   depends_on = [google_storage_bucket_object.sourcecode]
-  # lifecycle {
-  #   replace_triggered_by = [google_storage_bucket_object.sourcecode]
-  # }
 }
