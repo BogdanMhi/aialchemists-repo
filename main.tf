@@ -8,15 +8,15 @@ resource "google_storage_bucket" "my_bucket" {
 
 data "archive_file" "zip" {
   type        = "zip"
-  source_dir  = "./cloud_functions/image_handler"
-  output_path = "./assets/function-image_handler.zip"
+  source_dir  = "cloud_functions/image_handler"
+  output_path = "assets/function-image_handler.zip"
 }
 
 
 resource "google_storage_bucket_object" "sourcecode" {
   name   = "image_handler/function-source.zip"
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = "./assets/function-image_handler.zip" # Add path to the zipped function source code
+  source = "assets/function-image_handler.zip" # Add path to the zipped function source code
 }
 
 
