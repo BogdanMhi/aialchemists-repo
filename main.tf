@@ -6,16 +6,16 @@ resource "google_storage_bucket" "my_bucket" {
   public_access_prevention = "enforced"
 }
 
-data "archive_file" "zip" {
-  type        = "zip"
-  source_dir  = "cloud_functions/image_handler"
-  output_path = "assets/function-image_handler.zip"
-}
+# data "archive_file" "zip" {
+#   type        = "zip"
+#   source_dir  = "cloud_functions/image_handler"
+#   output_path = "assets/mage_handler.zip"
+# }
 
 resource "google_storage_bucket_object" "sourcecode" {
   name   = "image_handler/function-source.zip"
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = "assets/function-image_handler.zip" # Add path to the zipped function source code
+  source = "assets/image_handler.zip" # Add path to the zipped function source code
   # description = data.archive_file.zip.md5 != data.google_storage_bucket_object.sourcecode.md5 ? data.archive_file.zip.md5 : null
 }
 
