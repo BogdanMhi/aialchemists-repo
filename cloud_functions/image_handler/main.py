@@ -16,7 +16,7 @@ os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tess
 
 def extract_text_from_image(image_path):
     """
-    Docstring
+    Docstrings
 
     Args:
         image_path (str): The path to the image file to be checked.
