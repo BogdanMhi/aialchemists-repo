@@ -27,7 +27,7 @@ resource "null_resource" "remove_zip" {
   provisioner "local-exec" {
     command = "rm assets/function-image_handler.zip"
   }
-  depends_on = [ google_storage_bucket_object.sourcecode ]
+  depends_on = [google_storage_bucket_object.sourcecode]
 }
 
 ## to_pdf_converter
