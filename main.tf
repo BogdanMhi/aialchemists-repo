@@ -58,7 +58,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
   }
 
   lifecycle {
-    replace_triggered_by = [ google_storage_bucket_object.sourcecode ]
+    replace_triggered_by = [google_storage_bucket_object.sourcecode]
   }
 
 }
