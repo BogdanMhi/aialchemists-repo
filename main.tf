@@ -12,11 +12,6 @@ data "archive_file" "zip" {
   output_path = "assets/function-image_handler.zip"
 }
 
-data "google_storage_bucket_object" "sourcecode" {
-  name   = "image_handler/function-source.zip"
-  bucket = "gcf-v2-sources-957891796445-europe-west3"
-}
-
 resource "google_storage_bucket_object" "sourcecode" {
   name   = "image_handler/function-source.zip"
   bucket = "gcf-v2-sources-957891796445-europe-west3"
@@ -24,6 +19,16 @@ resource "google_storage_bucket_object" "sourcecode" {
   # description = data.archive_file.zip.md5 != data.google_storage_bucket_object.sourcecode.md5 ? data.archive_file.zip.md5 : null
 }
 
+resource "null_resource" "remove_zip" {
+  triggers = {
+    zip_path = "assets/function-image_handler.zip"
+  }
+
+  provisioner "local-exec" {
+    command = "rm assets/function-image_handler.zip"
+  }
+  depends_on = [ google_storage_bucket_object.sourcecode ]
+}
 
 ## to_pdf_converter
 resource "google_cloudfunctions2_function" "image_handler" {
