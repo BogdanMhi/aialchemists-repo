@@ -61,5 +61,5 @@ resource "google_cloudfunctions2_function" "image_handler" {
     replace_triggered_by = [google_storage_bucket_object.sourcecode]
   }
 
-  depends_on = [ google_storage_bucket_object.sourcecode ]
+  depends_on = [google_storage_bucket_object.sourcecode]
 }
