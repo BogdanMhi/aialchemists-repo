@@ -1,3 +1,12 @@
+terraform {
+  required_version = ">= 0.13"
+
+  backend "gcs" {
+    bucket = "tf_state_8d85fe"
+    prefix = "terraform/state"
+  }
+}
+
 resource "google_storage_bucket" "my_bucket" {
   name                     = "ingestion_data_bucket"
   project                  = "docai-accelerator"
@@ -9,18 +18,20 @@ resource "google_storage_bucket" "my_bucket" {
 data "archive_file" "zip" {
   type        = "zip"
   source_dir  = "cloud_functions/image_handler"
-  output_path = "assets/function-image_handler.zip"
+  output_path = "assets/image_handler.zip"
 }
-
 
 resource "google_storage_bucket_object" "sourcecode" {
-  name   = "image_handler/function-source.zip"
+  name = format(
+    "%s#%s",
+    "image_handler/function-source.zip",
+    data.archive_file.zip.output_md5
+  )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = "assets/function-image_handler.zip" # Add path to the zipped function source code
+  source = "assets/image_handler.zip" # Add path to the zipped function source code
 }
 
-
-## to_pdf_converter
+## image_handler
 resource "google_cloudfunctions2_function" "image_handler" {
   location = "europe-west3"
   name     = "image_handler"
@@ -34,14 +45,14 @@ resource "google_cloudfunctions2_function" "image_handler" {
   build_config {
     runtime     = "python38"
     entry_point = "image_handler"
-    # docker_repository                        = "projects/docai-accelerator/locations/${var.region}/repositories/${var.cloudfunctions_artifactstorage_name}"
     source {
       storage_source {
         bucket = "gcf-v2-sources-957891796445-europe-west3"
-        object = "image_handler/function-source.zip"
+        object = google_storage_bucket_object.sourcecode.name
       }
     }
   }
+
   service_config {
     max_instance_count = 350
     available_memory   = "4G"
@@ -55,10 +66,6 @@ resource "google_cloudfunctions2_function" "image_handler" {
     event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
     pubsub_topic   = "projects/docai-accelerator/topics/image_handler_topic"
     retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
-  }
-
-  lifecycle {
-    replace_triggered_by = [google_storage_bucket_object.sourcecode]
   }
 
   depends_on = [google_storage_bucket_object.sourcecode]
