@@ -77,7 +77,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
 
   depends_on = [
     google_storage_bucket_object.sourcecode_image_handler
-    ]
+  ]
 }
 
 
@@ -104,21 +104,21 @@ resource "google_cloudfunctions_function" "IoT_handler" {
     update = "60m"
   }
 
-  region                        = "europe-west3"
-  name                          = "IoT_handler"
-  entry_point                   = "IoT_handler"
-  runtime                       = "python38"
-  timeout                       = 540
-  max_instances                 = 500
-  available_memory_mb           = 2048
+  region              = "europe-west3"
+  name                = "IoT_handler"
+  entry_point         = "IoT_handler"
+  runtime             = "python38"
+  timeout             = 540
+  max_instances       = 500
+  available_memory_mb = 2048
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
     resource   = "iot_handler"
   }
 
-  source_archive_bucket         = "gcf-v2-sources-957891796445-europe-west3"
-  source_archive_object         = google_storage_bucket_object.sourcecode_IoT_handler.name
+  source_archive_bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source_archive_object = google_storage_bucket_object.sourcecode_IoT_handler.name
 
 
   depends_on = [
@@ -182,5 +182,5 @@ resource "google_cloudfunctions2_function" "video_handler" {
 
   depends_on = [
     google_storage_bucket_object.sourcecode_video_handler
-    ]
+  ]
 }
