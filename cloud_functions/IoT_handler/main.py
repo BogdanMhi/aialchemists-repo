@@ -5,7 +5,7 @@ import functions_framework
 from langchain_community.document_loaders import YoutubeLoader
 
 @functions_framework.cloud_event
-def main(cloud_event):
+def IoT_handler(cloud_event):
     """
     A cloud function that extracts the content of a web page or the transcript of a youtube object
 

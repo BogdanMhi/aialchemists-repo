@@ -1,9 +1,10 @@
-from google.cloud import storage
 import whisper
 import json, base64
+import functions_framework
+from google.cloud import storage
 
 @functions_framework.cloud_event
-def main(cloud_event):
+def video_handler(cloud_event):
     """
     A cloud function that extracts the audio into text from a video file
 
