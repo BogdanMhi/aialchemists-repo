@@ -1,0 +1,4 @@
+openai-whisper
+google-cloud-storage
+google-cloud-pubsub
+functions-framework==3.*
