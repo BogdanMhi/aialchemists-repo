@@ -9,16 +9,13 @@ from typing import Callable
 PROJECT_ID = "docai-accelerator"
 
 
-def publish_message(
-    topic_id: str, data: str, attributes: dict = None, logger=None
-) -> None:
+def publish_message(topic_id: str, data: str, attributes: dict = None) -> None:
     """Publish a message to a Google Cloud Pub/Sub topic.
 
     Args:
         topic_id (str): The ID of the topic to publish to.
         data (str): The message to be published.
         attributes (dict): The attributes to use.
-        logger (logging.Logger): The logger object.
 
     Returns:
         None
