@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import functions_framework
 from langchain_community.document_loaders import YoutubeLoader
+from .publisher import publish_message
 
 @functions_framework.cloud_event
 def IoT_handler(cloud_event):

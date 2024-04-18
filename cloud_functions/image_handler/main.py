@@ -9,6 +9,7 @@ import cv2
 import pytesseract
 from google.cloud import storage
 import functions_framework
+from .publisher import publish_message
 
 
 os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tessdata'
