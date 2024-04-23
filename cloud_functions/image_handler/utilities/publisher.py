@@ -5,8 +5,7 @@ A module to abstract away interactions with pub/sub
 from concurrent import futures
 from google.cloud import pubsub_v1
 from typing import Callable
-
-PROJECT_ID = "docai-accelerator"
+from .settings import PROJECT_ID
 
 
 def publish_message(topic_id: str, data: str, attributes: dict = None) -> None:

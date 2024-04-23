@@ -2,7 +2,7 @@ import whisper
 import json, base64
 import functions_framework
 from google.cloud import storage
-from .publisher import publish_message
+from utilities.publisher import publish_message
 
 @functions_framework.cloud_event
 def video_handler(cloud_event):
@@ -27,3 +27,4 @@ def video_handler(cloud_event):
     
     transcript = json.dumps({"text": result["text"]})
     print(transcript)
+    # publish_message(topic_name, transcript)
