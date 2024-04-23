@@ -40,7 +40,6 @@ jobs:
     
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      working_directory: "./terraform"
       run: terraform init -backend-config="../../terraform/environments/backend_infrastructure.conf"
 
     # Checks that all Terraform configuration files adhere to a canonical format
