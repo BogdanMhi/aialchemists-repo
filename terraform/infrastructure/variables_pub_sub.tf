@@ -1,8 +1,3 @@
-# General
-variable project { default = "docai-accelerator" }
-variable region { default = "europe-west3" }
-variable zone { default = "europe-west3-a" }
-
 ## Topics
 variable document_handler_topic_name { default = "document_handler_trigger" }
 variable format_classifier_topic_name { default = "format_classifier_trigger" }
