@@ -1,0 +1,79 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+.login-container h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.login-container label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.login-container button[type="submit"], .login-container button[id="registerButton"] {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.login-container button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+.login-container button[type="submit"]:hover {
+    background-color: #45a049;
+}
+.login-container button[id="registerButton"] {
+    background-color: #1E90FF; /* A distinct blue */
+    color: white;
+    margin-top: 20px; /* Spacing between login and register buttons */
+}
+.login-container button[id="registerButton"]:hover {
+    background-color: #0d7ecc; /* A slightly darker blue for hover effect */
+}
+
+.login-container #output-message {
+    font-size: 16px;
+    margin-top: 20px;
+    font-weight: bold;
+    display: block;
+}
+
+.login-container .success-message {
+    color: #2e8b57; /* Green for success */
+}
+
+.login-container .error-message {
+    color: #d9534f; /* Red for error */
+}
