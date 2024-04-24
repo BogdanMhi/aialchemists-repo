@@ -2,6 +2,7 @@ import base64, json
 import requests
 from bs4 import BeautifulSoup
 import functions_framework
+from utilities.publisher import publish_message
 
 @functions_framework.cloud_event
 def IoT_handler(cloud_event):
@@ -23,3 +24,4 @@ def IoT_handler(cloud_event):
     soup = BeautifulSoup(html_doc, 'html.parser')
     transcript = json.dumps({"text": soup.get_text().strip()})
     print(transcript)
+    # publish_message(topic_name, transcript)

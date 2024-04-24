@@ -1,14 +1,15 @@
 import base64
 import os
-import shutil
-import tempfile
-import time
-import concurrent.futures
+# import shutil
+# import tempfile
+# import time
+# import concurrent.futures
 
 import cv2
 import pytesseract
 from google.cloud import storage
 import functions_framework
+from utilities.publisher import publish_message
 
 
 os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tessdata'
@@ -64,3 +65,4 @@ def image_handler(cloud_event):
     output_text = extract_text_from_image(file_path)
     cleaned_output_text = " ".join(output_text.split())
     print(cleaned_output_text)
+    # publish_message(topic_name, cleaned_output_text)
