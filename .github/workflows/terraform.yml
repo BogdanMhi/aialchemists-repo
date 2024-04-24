@@ -47,6 +47,14 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check
 
+    # Check curent directory 
+    - name: Current Dir
+      run: pwd
+
+    # List the files from the existing dir
+    - name: Files list
+      run: ls
+
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false
