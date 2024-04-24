@@ -2,21 +2,20 @@ import os
 import json
 import base64
 import functions_framework
-import requests
-
+from google.cloud import firestore
 from google.cloud import bigquery
-from langchain.agents import initialize_agent, Tool, AgentType
+from langchain.agents import create_tool_calling_agent, Tool, AgentExecutor
 from langchain_openai import AzureChatOpenAI
+from langchain.prompts import PromptTemplate
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT
-
-bigquery_client = bigquery.Client()
+from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, PROJECT_ID, DATABASE_ID
+import requests
 
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
                     api_key = AZURE_OPENAI_API_KEY,  
-                    api_version = "2024-02-01",
+                    api_version="2024-02-01",
                     azure_endpoint = AZURE_OPENAI_ENDPOINT,
-                    temperature = 0)
+                    temperature=0)
 
 pub_med = PubmedQueryRun()
 tools = [
@@ -27,35 +26,24 @@ tools = [
     )
 ]
 
-PREFIX = """Analyze the given input and tell me if the information is supported by any medical research. You also have access to the following medical tools:"""
-FORMAT_INSTRUCTIONS = """Use the following format:
-
-Question: the input question you must answer
-Thought: you should always think about what to do
-Action: the action to take, should first search in your memory and if you don't have an answer, you should query one of these tools [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I now know the final answer
-Final Answer: format the final answer to the original input question and also specify the title, authors and web links to the articles you used as inspiration"""
-SUFFIX = """Begin!
-
-Input: {input}
-Thought:{agent_scratchpad}"""
-
-agent = initialize_agent(
-    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    tools=tools,
-    llm=llm,
-    agent_kwargs={
-        'prefix':PREFIX,
-        'format_instructions':FORMAT_INSTRUCTIONS,
-        'suffix':SUFFIX
-    },
-    verbose=True,
-    handle_parsing_errors=True
-)
-
+def extract_all_documents_from_collection(project_id, database_id, collection_name):
+    """
+    Extracts all documents from a Firestore collection in a specific database.
+ 
+    Parameters:
+        project_id (str): The Google Cloud project ID.
+        database_id (str): The ID of the Firestore database (e.g., "(default)" for the default database).
+        collection_name (str): The name of the Firestore collection from which documents need to be extracted.
+ 
+    Returns:
+        list: A list containing all the documents extracted from the collection.
+    """
+    firestore_client = firestore.Client(project=project_id, database=database_id)
+    collection_ref = firestore_client.collection(collection_name)
+    query = collection_ref.order_by('timestamp')
+    documents = [doc.to_dict() for doc in query.stream()]
+ 
+    return documents
 
 @functions_framework.cloud_event
 def text_processor(cloud_event):
@@ -69,13 +57,14 @@ def text_processor(cloud_event):
     uuid = pubsub_message['uuid']
     print(pubsub_message)
     # Query the BigQuery table to check if the uuid exists
+    client = bigquery.Client()
     try:
         query = f"""
             SELECT uuid
             FROM `docai-accelerator.aialchemists_user_table.users`
             WHERE uuid = '{uuid}'
         """
-        query_job = bigquery_client.query(query)
+        query_job = client.query(query)
         results = list(query_job)
         if not results:
             print(f"UUID '{uuid}' not found in the user table.")
@@ -83,11 +72,27 @@ def text_processor(cloud_event):
     except Exception as e:
         print('Error querying BigQuery table:', e)
         return 'Error querying BigQuery table', 500
-    ip = requests.get('https://api.ipify.org').text
-    print(f'My public IP address is: {ip}')
 
+    template = """The following is a serious conversation between a human and an AI. 
+    The AI is a medical engine with accurate and up-to-date medical knowledge that will only answer to medical questions.
+    The AI will always answer to greetings.
+    If the AI receives a non-medical question, apart from greetings, it says that the question is not related to the medical field and asks the human if he wants to adress another question.
+    The AI will use tools to look for an answer ONLY if it NEEDS to.
+    The AI's final answer will contain 2 sentences, plus medical articles and/or researches that addresses the query, only if it does.
 
-    result = agent.invoke(statement)
+    Current conversation:
+    {history}
+
+    Human: Given the following information: {input}
+    I want you to tell me if the information is supported by any medical research
+    {agent_scratchpad}"""
+
+    prompt = PromptTemplate(input_variables=["input"], template=template)
+    history = extract_all_documents_from_collection(PROJECT_ID, DATABASE_ID, uuid)
+    agent = create_tool_calling_agent(llm, tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+    result = agent_executor.invoke({"input": statement, "history": history})
     output_model = result['output']
 
     try:
