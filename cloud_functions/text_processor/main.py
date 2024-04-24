@@ -8,7 +8,7 @@ from langchain.agents import create_tool_calling_agent, Tool, AgentExecutor
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, PROJECT_ID, DATABASE_ID
+from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, PROJECT_ID, FIRESTORE_DATABASE_ID, BIGQUERY_DATABASE_ID
 import requests
 
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -61,7 +61,7 @@ def text_processor(cloud_event):
     try:
         query = f"""
             SELECT uuid
-            FROM `docai-accelerator.aialchemists_user_table.users`
+            FROM `{BIGQUERY_DATABASE_ID}`
             WHERE uuid = '{uuid}'
         """
         query_job = client.query(query)
@@ -88,7 +88,7 @@ def text_processor(cloud_event):
     {agent_scratchpad}"""
 
     prompt = PromptTemplate(input_variables=["input"], template=template)
-    history = extract_all_documents_from_collection(PROJECT_ID, DATABASE_ID, uuid)
+    history = extract_all_documents_from_collection(PROJECT_ID, FIRESTORE_DATABASE_ID, uuid)
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
