@@ -24,7 +24,7 @@ variable iot_handler_python_version {default = "python310"}
 
 ## text_processor
 variable text_processor_function_name {default = "text_processor_tf"}
-variable text_processor_function_memory {default = "4G"}
+variable text_processor_function_memory {default = 4096}
 variable text_processor_entry_point {default = "text_processor"}
 variable text_processor_python_version {default = "python310"}
 
