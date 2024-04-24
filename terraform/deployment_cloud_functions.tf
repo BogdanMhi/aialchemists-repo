@@ -1,7 +1,7 @@
 ## image_handler
 data "archive_file" "zip_image_handler" {
   type        = "zip"
-  source_dir  = "cloud_functions/image_handler"
+  source_dir  = "../cloud_functions/image_handler"
   output_path = "assets/image_handler.zip"
 }
 
@@ -61,7 +61,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
 ## iot_handler
 data "archive_file" "zip_IoT_handler" {
   type        = "zip"
-  source_dir  = "cloud_functions/IoT_handler"
+  source_dir  = "../cloud_functions/IoT_handler"
   output_path = "assets/IoT_handler.zip"
 }
 
@@ -109,7 +109,7 @@ resource "google_cloudfunctions_function" "iot_handler" {
 ## video_handler
 data "archive_file" "zip_video_handler" {
   type        = "zip"
-  source_dir  = "cloud_functions/video_handler"
+  source_dir  = "../cloud_functions/video_handler"
   output_path = "assets/video_handler.zip"
 }
 
