@@ -48,8 +48,9 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform init -backend-config="../environments/backend_infrastructure.conf"
-      run: terraform plan -var-file="../environments/terraform.tfvars" tfplan
+      run: - terraform init -backend-config="../environments/backend_infrastructure.conf"
+           - |
+             terraform plan -var-file="../environments/terraform.tfvars" tfplan
 
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
