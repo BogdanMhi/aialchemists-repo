@@ -8,7 +8,6 @@ resource "google_pubsub_topic" "document_handler_function" {
     }
 }
 
-
 ## format_classifier
 resource "google_pubsub_topic" "format_classifier_function" {
     name = var.format_classifier_topic_name
@@ -27,7 +26,6 @@ resource "google_pubsub_topic" "image_handler_function" {
     }
 }
 
-
 ## iot_handler
 resource "google_pubsub_topic" "iot_handler_function" {
     name = var.iot_handler_topic_name
@@ -37,7 +35,6 @@ resource "google_pubsub_topic" "iot_handler_function" {
     }
 }
 
-
 ## text_processor
 resource "google_pubsub_topic" "text_processor_function" {
     name = var.text_processor_topic_name
@@ -46,7 +43,6 @@ resource "google_pubsub_topic" "text_processor_function" {
         allowed_persistance_regions = [var.region]
     }
 }
-
 
 ## video_handler
 resource "google_pubsub_topic" "video_handler_function" {

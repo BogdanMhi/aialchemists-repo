@@ -5,7 +5,6 @@ data "archive_file" "zip_image_handler" {
   output_path = "assets/image_handler.zip"
 }
 
-
 resource "google_storage_bucket_object" "image_handler_sourcecode" {
   name = format(
     "%s#%s",
@@ -15,7 +14,6 @@ resource "google_storage_bucket_object" "image_handler_sourcecode" {
   bucket = "gcf-v2-sources-957891796445-europe-west3"
   source = archive_file.zip_image_handler.output_path
 }
-
 
 resource "google_cloudfunctions2_function" "image_handler" {
   location = var.region
@@ -48,7 +46,6 @@ resource "google_cloudfunctions2_function" "image_handler" {
     timeout_seconds    = 540
   }
 
-
   event_trigger {
     trigger_region = var.region
     event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
@@ -61,14 +58,12 @@ resource "google_cloudfunctions2_function" "image_handler" {
   ]
 }
 
-
 ## iot_handler
 data "archive_file" "zip_IoT_handler" {
   type        = "zip"
   source_dir  = "cloud_functions/IoT_handler"
   output_path = "assets/IoT_handler.zip"
 }
-
 
 resource "google_storage_bucket_object" "iot_handler_sourcecode" {
   name = format(
@@ -79,7 +74,6 @@ resource "google_storage_bucket_object" "iot_handler_sourcecode" {
   bucket = "gcf-v2-sources-957891796445-europe-west3"
   source = archive_file.zip_IoT_handler.output_path
 }
-
 
 resource "google_cloudfunctions_function" "iot_handler" {
   timeouts {
@@ -113,14 +107,12 @@ resource "google_cloudfunctions_function" "iot_handler" {
   ]
 }
 
-
 ## video_handler
 data "archive_file" "zip_video_handler" {
   type        = "zip"
   source_dir  = "cloud_functions/video_handler"
   output_path = "assets/video_handler.zip"
 }
-
 
 resource "google_storage_bucket_object" "video_handler_sourcecode" {
   name = format(
@@ -131,7 +123,6 @@ resource "google_storage_bucket_object" "video_handler_sourcecode" {
   bucket = "gcf-v2-sources-957891796445-europe-west3"
   source = archive_file.zip_video_handler.output_path
 }
-
 
 resource "google_cloudfunctions2_function" "video_handler" {
   location = var.region
@@ -163,7 +154,6 @@ resource "google_cloudfunctions2_function" "video_handler" {
     available_cpu      = "4"
     timeout_seconds    = 540
   }
-
 
   event_trigger {
     trigger_region = var.region
