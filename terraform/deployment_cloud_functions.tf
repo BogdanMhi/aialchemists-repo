@@ -166,6 +166,54 @@ resource "google_cloudfunctions_function" "iot_handler" {
   ]
 }
 
+## text_processor
+data "archive_file" "zip_text_processor" {
+  type        = "zip"
+  source_dir  = "../cloud_functions/text_processor"
+  output_path = "assets/text_processor.zip"
+}
+
+resource "google_storage_bucket_object" "text_processor_sourcecode" {
+  name = format(
+    "%s#%s",
+    "text_processor/function-source.zip",
+    data.archive_file.zip_text_processor.output_md5
+  )
+  bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source = data.archive_file.zip_text_processor.output_path
+}
+
+resource "google_cloudfunctions_function" "text_processor" {
+  timeouts {
+    create = "60m"
+    update = "60m"
+  }
+
+  region              = var.region
+  name                = var.text_processor_function_name
+  entry_point         = var.text_processor_entry_point
+  runtime             = var.text_processor_python_version
+  timeout             = 540
+  max_instances       = 500
+  available_memory_mb = var.text_processor_function_memory
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.text_processor_function.name
+  }
+
+  source_archive_bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source_archive_object = google_storage_bucket_object.text_processor_sourcecode.name
+
+  environment_variables = {
+    PROJECT_ID = var.project
+  }
+
+  depends_on = [
+    google_storage_bucket_object.text_processor_sourcecode
+  ]
+}
+
 ## video_handler
 data "archive_file" "zip_video_handler" {
   type        = "zip"
