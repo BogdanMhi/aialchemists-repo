@@ -12,7 +12,7 @@ resource "google_storage_bucket_object" "image_handler_sourcecode" {
     data.archive_file.zip_image_handler.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = archive_file.zip_image_handler.output_path
+  source = data.archive_file.zip_image_handler.output_path
 }
 
 resource "google_cloudfunctions2_function" "image_handler" {
@@ -72,7 +72,7 @@ resource "google_storage_bucket_object" "iot_handler_sourcecode" {
     data.archive_file.zip_IoT_handler.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = archive_file.zip_IoT_handler.output_path
+  source = data.archive_file.zip_IoT_handler.output_path
 }
 
 resource "google_cloudfunctions_function" "iot_handler" {
@@ -121,7 +121,7 @@ resource "google_storage_bucket_object" "video_handler_sourcecode" {
     data.archive_file.zip_video_handler.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = archive_file.zip_video_handler.output_path
+  source = data.archive_file.zip_video_handler.output_path
 }
 
 resource "google_cloudfunctions2_function" "video_handler" {
