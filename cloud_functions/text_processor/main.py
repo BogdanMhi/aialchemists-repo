@@ -8,7 +8,7 @@ from google.cloud import bigquery
 from langchain.agents import initialize_agent, Tool, AgentType
 from langchain_openai import AzureChatOpenAI
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from utilities.settings import *
+from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT
 
 bigquery_client = bigquery.Client()
 
