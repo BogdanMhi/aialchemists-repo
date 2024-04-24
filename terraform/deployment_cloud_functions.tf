@@ -207,7 +207,8 @@ resource "google_cloudfunctions_function" "text_processor" {
 
   environment_variables = {
     PROJECT_ID = var.project
-    DATABASE_ID = var.firestore_database_name
+    FIRESTORE_DATABASE_ID = var.firestore_database_name
+    BIGQUERY_DATABASE_ID = "${var.project}.${var.bigquery_database_name}.${var.bigquery_database_table}"
     AZURE_OPENAI_API_KEY = var.text_processor_azure_api_key
     AZURE_OPENAI_ENDPOINT = var.text_processor_azure_endpoint
   }
