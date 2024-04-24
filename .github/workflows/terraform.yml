@@ -40,7 +40,7 @@ jobs:
     
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init -backend-config="../../terraform/environments/backend_infrastructure.conf" -reconfigure
+      run: terraform init -backend-config="../environments/backend_infrastructure.conf" -reconfigure
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -48,10 +48,10 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var-file="../terraform/environments/terraform.tfvars" -out=tfplan
+      run: terraform plan -var-file="../environments/terraform.tfvars" -input=false -out=tfplan
 
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -var-file="../terraform/environments/terraform.tfvars" -auto-approve -input=false tfplan
+      run: terraform apply -var-file="../environments/terraform.tfvars" -auto-approve -input=false tfplan
