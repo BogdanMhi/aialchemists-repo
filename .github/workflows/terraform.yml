@@ -44,16 +44,8 @@ jobs:
       run: terraform init
 
     # Checks that all Terraform configuration files adhere to a canonical format
-    #- name: Terraform Format
-    #  run: terraform fmt -check
-
-    # Check curent directory 
-    - name: Current Dir
-      run: pwd
-
-    # List the files from the existing dir
-    - name: Files list
-      run: ls
+    - name: Terraform Format
+      run: terraform fmt -check
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
