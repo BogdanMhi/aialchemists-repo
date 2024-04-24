@@ -8,14 +8,15 @@ from google.cloud import bigquery
 from langchain.agents import initialize_agent, Tool, AgentType
 from langchain_openai import AzureChatOpenAI
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
+from utilities.settings import *
 
 bigquery_client = bigquery.Client()
 
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
-                    api_key=os.getenv("AZURE_OPENAI_API_KEY"),  
-                    api_version="2024-02-01",
-                    azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
-                    temperature=0)
+                    api_key = AZURE_OPENAI_API_KEY,  
+                    api_version = "2024-02-01",
+                    azure_endpoint = AZURE_OPENAI_ENDPOINT,
+                    temperature = 0)
 
 pub_med = PubmedQueryRun()
 tools = [
