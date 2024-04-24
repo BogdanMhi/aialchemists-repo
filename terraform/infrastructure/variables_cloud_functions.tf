@@ -1,8 +1,9 @@
-## doc_handler
-variable doc_handler_function_name { default = "doc_handler" }
+## document_handler
+variable doc_handler_function_name { default = "document_handler" }
 variable doc_handler_function_memory { default = "4G" }
-variable doc_handler_entry_point { default = "doc_handler" }
+variable doc_handler_entry_point { default = "document_handler" }
 variable doc_handler_python_version { default = "python38" }
+
 
 ## format_classifier
 variable format_classifier_function_name { default = "format_classifier" }
