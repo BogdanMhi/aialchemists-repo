@@ -91,7 +91,6 @@ resource "google_cloudfunctions_function" "iot_handler" {
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
-    pubsub_topic   = "projects/${var.project}/topics/${google_pubsub_topic.iot_handler_function.name}"
     resource   = google_pubsub_topic.iot_handler_function.name
   }
 
