@@ -1,4 +1,5 @@
 openai-whisper
 google-cloud-storage
 google-cloud-pubsub
+pytube3
 functions-framework==3.*

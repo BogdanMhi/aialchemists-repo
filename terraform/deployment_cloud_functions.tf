@@ -1,3 +1,63 @@
+## document_handler
+data "archive_file" "zip_document_handler" {
+  type        = "zip"
+  source_dir  = "../cloud_functions/document_handler"
+  output_path = "assets/document_handler.zip"
+}
+
+resource "google_storage_bucket_object" "document_handler_sourcecode" {
+  name = format(
+    "%s#%s",
+    "document_handler/function-source.zip",
+    data.archive_file.zip_document_handler.output_md5
+  )
+  bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source = data.archive_file.zip_document_handler.output_path
+}
+
+resource "google_cloudfunctions2_function" "document_handler" {
+  location = var.region
+  name     = var.document_handler_function_name
+  project  = var.project
+
+  timeouts {
+    create = "60m"
+    update = "60m"
+  }
+
+  build_config {
+    runtime     = var.document_handler_python_version
+    entry_point = var.document_handler_entry_point
+    source {
+      storage_source {
+        bucket = "gcf-v2-sources-957891796445-europe-west3"
+        object = google_storage_bucket_object.document_handler_sourcecode.name
+      }
+    }
+  }
+
+  service_config {
+    environment_variables = {
+      PROJECT_ID = var.project
+    }
+    max_instance_count = 350
+    available_memory   = var.document_handler_function_memory
+    available_cpu      = "4"
+    timeout_seconds    = 540
+  }
+
+  event_trigger {
+    trigger_region = var.region
+    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic   = "projects/${var.project}/topics/${google_pubsub_topic.document_handler_function.name}"
+    retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
+  }
+
+  depends_on = [
+    google_storage_bucket_object.document_handler_sourcecode
+  ]
+}
+
 ## image_handler
 data "archive_file" "zip_image_handler" {
   type        = "zip"
