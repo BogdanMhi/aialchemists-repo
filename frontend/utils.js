@@ -32,11 +32,11 @@ const registerDbUser = async (username, password) => {
     const hashedPassword = hashPassword(password);
     const uuid = crypto.randomBytes(16).toString('hex'); // Generate UUID
     const query = `
-      INSERT INTO \`docai-accelerator.aialchemists_user_table.users\`
+      INSERT INTO \`docai-accelerator.ai_alchemists_user_table.users\`
       (user_id, password, uuid)
       VALUES ('${username}', '${hashedPassword}', '${uuid}')
     `;
-    await bigquery.query(query);
+    await bigquery.query(query, {location: "europe-west3"});
     console.log(`User ${username} registered successfully with UUID: ${uuid}`);
     await createDbCollection(uuid);
     return { success: true, uuid };
@@ -105,7 +105,7 @@ const queryBigquery = async(username, password) => {
   console.log(password);
   const query = `
       SELECT user_id, uuid
-      FROM \`docai-accelerator.aialchemists_user_table.users\`
+      FROM \`docai-accelerator.ai_alchemists_user_table.users\`
       WHERE user_id = '${username}'
       AND password = '${hashedPassword}'
       LIMIT 1
@@ -113,7 +113,7 @@ const queryBigquery = async(username, password) => {
   console.log(query);
   // Parameters for the query
   // Run the query
-  const [rows] = await bigquery.query(query);
+  const [rows] = await bigquery.query(query, {location: "europe-west3"});
   // console.log(rows);
   return rows;
 };

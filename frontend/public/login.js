@@ -1,3 +1,4 @@
+const outputMessage = document.getElementById('output-message');
 
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent the form from submitting
@@ -30,9 +31,10 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     if (!response.ok) {
         // Handle errors or display error message if upload fails
-        const errorMessage = document.getElementById('error-message');
-        errorMessage.textContent = 'You have entered an incorrect username or password. Please try again.';
-        errorMessage.style.display = 'block';
+        outputMessage.textContent = 'You have entered an incorrect username or password. Please try again.';
+        outputMessage.style.display = 'block';
+        outputMessage.classList.remove('success-message');
+        outputMessage.classList.add('error-message');
     } else {
         window.location.href = '/';
         // Reset form fields if upload is successful
@@ -49,7 +51,6 @@ document.getElementById('registerButton').addEventListener('click', async functi
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const outputMessage = document.getElementById('output-message');
 
     // Check if username and password are not empty
     if (username.trim() === '' || password.trim() === '') {
