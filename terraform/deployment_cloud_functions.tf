@@ -175,20 +175,20 @@ resource "google_cloudfunctions2_function" "image_handler" {
 }
 
 ## iot_handler
-data "archive_file" "zip_IoT_handler" {
+data "archive_file" "zip_iot_handler" {
   type        = "zip"
-  source_dir  = "../cloud_functions/IoT_handler"
-  output_path = "assets/IoT_handler.zip"
+  source_dir  = "../cloud_functions/iot_handler"
+  output_path = "assets/iot_handler.zip"
 }
 
 resource "google_storage_bucket_object" "iot_handler_sourcecode" {
   name = format(
     "%s#%s",
-    "IoT_handler/function-source.zip",
-    data.archive_file.zip_IoT_handler.output_md5
+    "iot_handler/function-source.zip",
+    data.archive_file.zip_iot_handler.output_md5
   )
   bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = data.archive_file.zip_IoT_handler.output_path
+  source = data.archive_file.zip_iot_handler.output_path
 }
 
 resource "google_cloudfunctions_function" "iot_handler" {
@@ -246,13 +246,16 @@ resource "google_cloudfunctions_function" "text_processor" {
     update = "60m"
   }
 
-  region              = var.region
-  name                = var.text_processor_function_name
-  entry_point         = var.text_processor_entry_point
-  runtime             = var.text_processor_python_version
-  timeout             = 540
-  max_instances       = 500
-  available_memory_mb = var.text_processor_function_memory
+  region                        = var.region
+  name                          = var.text_processor_function_name
+  entry_point                   = var.text_processor_entry_point
+  runtime                       = var.text_processor_python_version
+  timeout                       = 540
+  max_instances                 = 500
+  ingress_settings              = var.text_processor_ingress_selection
+  vpc_connector                 = var.vpc_access_connector
+  vpc_connector_egress_settings = var.text_processor_vpc_egress
+  available_memory_mb           = var.text_processor_function_memory
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"

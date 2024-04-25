@@ -23,10 +23,12 @@ variable iot_handler_entry_point {default = "IoT_handler"}
 variable iot_handler_python_version {default = "python310"}
 
 ## text_processor
-variable text_processor_function_name {default = "text_processor"}
+variable text_processor_function_name {default = "text_processor_tf"}
 variable text_processor_function_memory {default = 4096}
 variable text_processor_entry_point {default = "text_processor"}
 variable text_processor_python_version {default = "python310"}
+variable text_processor_ingress_selection {default = "ALLOW_INTERNAL_ONLY"}
+variable text_processor_vpc_egress {default = "ALL_TRAFFIC"}
 variable text_processor_azure_api_key {default = "8a78487f81da4dd8867c72e07bb31387"}
 variable text_processor_azure_endpoint {default = "https://ceerdcopenai.openai.azure.com/"}
 
