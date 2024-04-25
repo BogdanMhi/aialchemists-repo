@@ -177,7 +177,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
 ## iot_handler
 data "archive_file" "zip_iot_handler" {
   type        = "zip"
-  source_dir  = "../cloud_functions/iot_handler"
+  source_dir  = "../cloud_functions/IoT_handler"
   output_path = "assets/iot_handler.zip"
 }
 
