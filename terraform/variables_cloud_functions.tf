@@ -5,10 +5,10 @@ variable document_handler_entry_point {default = "document_handler"}
 variable document_handler_python_version {default = "python312"}
 
 ## format_classifier
-variable format_classifier_function_name {default = "format_classifier"}
+variable format_classifier_function_name {default = "format_classifier_tf"}
 variable format_classifier_function_memory {default = 2048}
 variable format_classifier_entry_point {default = "format_classifier"}
-variable format_classifier_python_version {default = "python38"}
+variable format_classifier_python_version {default = "python39"}
 
 ## image_handler
 variable image_handler_function_name {default = "image_handler"}

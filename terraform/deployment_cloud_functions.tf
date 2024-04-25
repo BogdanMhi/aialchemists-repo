@@ -39,6 +39,7 @@ resource "google_cloudfunctions2_function" "document_handler" {
   service_config {
     environment_variables = {
       PROJECT_ID = var.project
+      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
     }
     max_instance_count = 350
     available_memory   = var.document_handler_function_memory
@@ -55,6 +56,60 @@ resource "google_cloudfunctions2_function" "document_handler" {
 
   depends_on = [
     google_storage_bucket_object.document_handler_sourcecode
+  ]
+}
+
+## format_classifier
+data "archive_file" "zip_format_classifier" {
+  type        = "zip"
+  source_dir  = "../cloud_functions/format_classifier"
+  output_path = "assets/format_classifier.zip"
+}
+
+resource "google_storage_bucket_object" "format_classifier_sourcecode" {
+  name = format(
+    "%s#%s",
+    "format_classifier/function-source.zip",
+    data.archive_file.zip_format_classifier.output_md5
+  )
+  bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source = data.archive_file.zip_format_classifier.output_path
+}
+
+resource "google_cloudfunctions_function" "format_classifier" {
+  timeouts {
+    create = "60m"
+    update = "60m"
+  }
+
+  region              = var.region
+  name                = var.format_classifier_function_name
+  entry_point         = var.format_classifier_entry_point
+  runtime             = var.format_classifier_python_version
+  timeout             = 540
+  max_instances       = 500
+  available_memory_mb = var.format_classifier_function_memory
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.format_classifier_function.name
+  }
+
+  source_archive_bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source_archive_object = google_storage_bucket_object.format_classifier_sourcecode.name
+
+  environment_variables = {
+    PROJECT_ID               = var.project
+    DOCUMENT_HANDLER_TRIGGER = google_pubsub_topic.document_handler_function.name
+    IMAGE_HANDLER_TRIGGER    = google_pubsub_topic.image_handler_function.name
+    IOT_HANDLER_TRIGGER      = google_pubsub_topic.iot_handler_function.name
+    INGESTION_DATA_BUCKET    = google_storage_bucket.ingestion_bucket.name
+    TEXT_PROCESSOR_TRIGGER   = google_pubsub_topic.text_processor_function.name
+    VIDEO_HANDLER_TRIGGER    = google_pubsub_topic.video_handler_function.name
+  }
+
+  depends_on = [
+    google_storage_bucket_object.format_classifier_sourcecode
   ]
 }
 
@@ -99,6 +154,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
   service_config {
     environment_variables = {
       PROJECT_ID = var.project
+      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
     }
     max_instance_count = 350
     available_memory   = var.image_handler_function_memory
@@ -159,6 +215,7 @@ resource "google_cloudfunctions_function" "iot_handler" {
 
   environment_variables = {
     PROJECT_ID = var.project
+    TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
   }
 
   depends_on = [
@@ -259,6 +316,7 @@ resource "google_cloudfunctions2_function" "video_handler" {
   service_config {
     environment_variables = {
       PROJECT_ID = var.project
+      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
     }
     max_instance_count = 350
     available_memory   = var.video_handler_function_memory

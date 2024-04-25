@@ -4,6 +4,7 @@ import tika
 
 from google.cloud import storage
 from utilities.publisher import publish_message
+from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 
 tika.initVM()
@@ -53,4 +54,4 @@ def document_handler(cloud_event):
     print(type(output_text))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     print(output_text)
-    # publish_message(topic_name, output_text)
+    publish_message(TEXT_PROCESSOR_TRIGGER, output_text)
