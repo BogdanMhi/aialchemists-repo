@@ -4,6 +4,7 @@ import functions_framework
 from google.cloud import storage
 from pytube import YouTube
 from utilities.publisher import publish_message
+from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 @functions_framework.cloud_event
 def video_handler(cloud_event):
@@ -37,4 +38,4 @@ def video_handler(cloud_event):
     
     transcript = json.dumps({"text": result["text"]})
     print(transcript)
-    # publish_message(topic_name, transcript)
+    publish_message(TEXT_PROCESSOR_TRIGGER, transcript)

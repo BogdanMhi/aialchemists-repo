@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import functions_framework
 from utilities.publisher import publish_message
+from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 @functions_framework.cloud_event
 def IoT_handler(cloud_event):
@@ -16,12 +17,16 @@ def IoT_handler(cloud_event):
     """
     pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
     message_data = json.loads(pubsub_message)
-    item_link = message_data['item_link']
+    item_link = message_data["statement"]
+    uuid = message_data["uuid"]
 
     print("Parsing web link")
     res = requests.get(item_link)
     html_doc = res.content
     soup = BeautifulSoup(html_doc, 'html.parser')
-    transcript = json.dumps({"text": soup.get_text().strip()})
+    transcript = json.dumps({
+        "statement": soup.get_text().strip(),
+        "uuid": uuid
+        })
     print(transcript)
-    # publish_message(topic_name, transcript)
+    publish_message(TEXT_PROCESSOR_TRIGGER, transcript)

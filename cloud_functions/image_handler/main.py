@@ -10,6 +10,7 @@ import pytesseract
 from google.cloud import storage
 import functions_framework
 from utilities.publisher import publish_message
+from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 
 os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tessdata'
@@ -65,4 +66,4 @@ def image_handler(cloud_event):
     output_text = extract_text_from_image(file_path)
     cleaned_output_text = " ".join(output_text.split())
     print(cleaned_output_text)
-    # publish_message(topic_name, cleaned_output_text)
+    publish_message(TEXT_PROCESSOR_TRIGGER, cleaned_output_text)
