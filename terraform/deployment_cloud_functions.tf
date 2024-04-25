@@ -252,9 +252,9 @@ resource "google_cloudfunctions_function" "text_processor" {
   runtime                       = var.text_processor_python_version
   timeout                       = 540
   max_instances                 = 500
-  ingress_settings              = var.text_processor_ingress_selection
+  ingress_settings              = var.ingress_selection
   vpc_connector                 = var.vpc_access_connector
-  vpc_connector_egress_settings = var.text_processor_vpc_egress
+  vpc_connector_egress_settings = var.vpc_egress
   available_memory_mb           = var.text_processor_function_memory
 
   event_trigger {
