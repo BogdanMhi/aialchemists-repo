@@ -55,6 +55,8 @@ def text_processor(cloud_event):
     pubsub_message = json.loads(pubsub_message)
     statement = pubsub_message['statement']
     uuid = pubsub_message['uuid']
+    # to be used in attachement_output
+    attachement_output = pubsub_message.get('attachement_output', '')
     print(pubsub_message)
     # Query the BigQuery table to check if the uuid exists
     client = bigquery.Client()

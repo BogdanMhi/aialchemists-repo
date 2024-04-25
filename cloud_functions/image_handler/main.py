@@ -1,10 +1,12 @@
-import base64
 import os
+import json
+import base64
 # import shutil
 # import tempfile
 # import time
 # import concurrent.futures
 
+import json
 import cv2
 import pytesseract
 from google.cloud import storage
@@ -58,12 +60,21 @@ client_storage = storage.Client()
 @functions_framework.cloud_event
 def image_handler(cloud_event):
     # Print out the data from Pub/Sub, to prove that it worked
-    cloud_image_name = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+    pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+    pubsub_message_json = json.loads(pubsub_message)
+    file_path_blob = pubsub_message_json["file_path"]
+
     image_bucket = client_storage.get_bucket("ingestion_data_placeholder")
-    image_blob = image_bucket.get_blob(cloud_image_name)
-    file_path = f"/tmp/{cloud_image_name.split('/')[-1]}"
+    image_blob = image_bucket.get_blob(file_path_blob)
+    file_path = f"/tmp/{file_path_blob.split('/')[-1]}"
     image_blob.download_to_filename(file_path)
     output_text = extract_text_from_image(file_path)
     cleaned_output_text = " ".join(output_text.split())
+
     print(cleaned_output_text)
-    publish_message(TEXT_PROCESSOR_TRIGGER, cleaned_output_text)
+    output_message = json.dumps({
+        "statement": pubsub_message_json["statement"],
+        "attachement_output": cleaned_output_text,
+        "uuid": pubsub_message_json["uuid"]
+        })
+    publish_message(TEXT_PROCESSOR_TRIGGER, output_message)

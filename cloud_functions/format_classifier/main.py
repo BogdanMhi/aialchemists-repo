@@ -102,7 +102,6 @@ def format_classifier(event, context):
     pubsub_message = base64.b64decode(event["data"]).decode("utf-8")
     pubsub_message_json = json.loads(pubsub_message)
     statement = pubsub_message_json["statement"]
-    uuid = pubsub_message_json["uuid"]
     file_path = pubsub_message_json.get("file_path", "")
     if file_path:
         blob = placeholder_bucket.get_blob(file_path)
