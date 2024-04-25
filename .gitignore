@@ -9,3 +9,4 @@ __pycache__/
 .terraform/*
 assets/*
 terraform/.terraform.lock.hcl
+frontend/node_modules/*
