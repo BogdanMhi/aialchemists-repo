@@ -1,6 +1,6 @@
 ## Cloud Run
 ## Activate Cloud Run API
-resource "google_project_service" "cloudrun" {
+resource "google_project_service" "cloud_run" {
   service  = "run.googleapis.com"
   project  = var.project
   disable_on_destroy = false
@@ -27,7 +27,7 @@ resource "google_cloud_run_v2_service" "web_app_test" {
 
 ## Set IAM policy to be publicly accessible
 resource "google_cloud_run_service_iam_member" "public" {
-  service     = google_cloud_run_service.web_app_test.name
+  service     = google_cloud_run_v2_service.web_app_test.name
   location    = var.region
   project     = var.project
   role        = "roles/run.invoker"
@@ -36,5 +36,5 @@ resource "google_cloud_run_service_iam_member" "public" {
 
 ## Exporting the URL
 output "url" {
-  value = "${google_cloud_run_service.web_app_test.status[0].url}"
+  value = "${google_cloud_run_v2_service.web_app_test.status[0].url}"
 }
