@@ -27,9 +27,9 @@ resource "google_cloud_run_v2_service" "web_app_test" {
 
 ## Set IAM policy to be publicly accessible
 resource "google_cloud_run_v2_service_iam_member" "public" {
-  project = google_cloud_run_v2_service.default.project
-  location = google_cloud_run_v2_service.default.location
-  name = google_cloud_run_v2_service.default.name
+  project = google_cloud_run_v2_service.web_app_test.project
+  location = google_cloud_run_v2_service.web_app_test.location
+  name = google_cloud_run_v2_service.web_app_test.name
   role = "roles/viewer"
   member = "allUsers"
 }
