@@ -36,5 +36,5 @@ resource "google_cloud_run_service_iam_member" "public" {
 
 ## Exporting the URL
 output "url" {
-  value = "${google_cloud_run_v2_service.web_app_test.status[0].url}"
+  value = "${google_cloud_run_v2_service.web_app_test.uri}"
 }
