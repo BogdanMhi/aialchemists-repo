@@ -37,7 +37,7 @@ resource "google_cloud_run_service" "web_app_test" {
 #    type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
 #    percent = 100
 #  }
-#}
+}
 
 ## Set IAM policy to be publicly accessible
 #resource "google_cloud_run_v2_service_iam_member" "public" {
