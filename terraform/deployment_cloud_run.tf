@@ -7,7 +7,7 @@
 #}
 
 ## Declare Cloud Run service
-resource "google_cloud_run_service" "web-app-test" {
+resource "google_cloud_run_service" "web_app_test" {
   name     = var.cloud_run_web_app_name
   location = var.region
   project  = var.project
@@ -24,7 +24,7 @@ resource "google_cloud_run_service" "web-app-test" {
   traffic {
     percent         = 100
     latest_revision = true
-    tag = "latest_web_app"
+    tag = "latest-web-app"
   }
 
 #  template {
