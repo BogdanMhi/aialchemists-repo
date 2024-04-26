@@ -22,7 +22,6 @@ resource "google_cloud_run_v2_service" "web_app_test" {
   traffic {
     type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
     percent = 100
-    tag = "latest_web_app"
   }
 }
 
