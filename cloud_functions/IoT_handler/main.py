@@ -11,7 +11,9 @@ def IoT_handler(cloud_event):
     A cloud function that extracts the content of a web page
 
     Args:
-        item_link (str): The link to the item to be processed
+        statement (str): The question asked by the user in the UI
+        url_links (str): The link to the web item to be processed
+        uuid      (str): Unique identifier of the user
     Returns:
         transcript (str): Content of the web page
     """
