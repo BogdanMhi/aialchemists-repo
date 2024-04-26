@@ -12,12 +12,10 @@ def video_handler(cloud_event):
     A cloud function that extracts the audio into text from a video file
 
     Args:
-        statement (str): The question asked by the user in the UI
-        url_links (str): The link to the youtube item to be processed (if any)
-        file_path (str): Name of the audio/video file uploaded in the UI and needs to be processed (if any)
-        uuid      (str): Unique identifier of the user
+        object_type (str): Type of the parsed object (youtube/video)
+        object_path (str): Path where the object can be found (youtube link/name of the file to be searched in cloud storage)
     Returns:
-        transcript (str): Content of the video/audio object or youtube link
+        transcript (str): Content of the video/audio object
     """
     pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
     message_data = json.loads(pubsub_message)
