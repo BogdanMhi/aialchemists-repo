@@ -26,12 +26,12 @@ resource "google_cloud_run_v2_service" "web_app_test" {
 }
 
 ## Set IAM policy to be publicly accessible
-resource "google_cloud_run_service_iam_member" "public" {
-  service     = google_cloud_run_v2_service.web_app_test.name
-  location    = var.region
-  project     = var.project
-  role        = "roles/run.invoker"
-  member      = "allUsers"
+resource "google_cloud_run_v2_service_iam_member" "public" {
+  project = google_cloud_run_v2_service.default.project
+  location = google_cloud_run_v2_service.default.location
+  name = google_cloud_run_v2_service.default.name
+  role = "roles/viewer"
+  member = "allUsers"
 }
 
 ## Exporting the URL
