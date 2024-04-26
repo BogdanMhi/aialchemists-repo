@@ -7,11 +7,25 @@
 #}
 
 ## Declare Cloud Run service
-#resource "google_cloud_run_v2_service" "web_app_test" {
-#  name     = var.cloud_run_web_app_name
-#  location = var.region
-#  project  = var.project
+resource "google_cloud_run_service" "web_app_test" {
+  name     = var.cloud_run_web_app_name
+  location = var.region
+  project  = var.project
   #ingress = "INGRESS_TRAFFIC_ALL"
+
+  template {
+    spec {
+      containers {
+        image = "europe-west3-docker.pkg.dev/docai-accelerator/cloud-run-source-deploy/web_app:latest"
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+    tag = "latest_web_app"
+  }
 
 #  template {
 #    containers {
