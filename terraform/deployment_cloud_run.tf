@@ -15,13 +15,14 @@ resource "google_cloud_run_v2_service" "web_app_test" {
 
   template {
     containers {
-      image = "gcr.io/docai-accelerator/web-app"
+      image = "europe-west3-docker.pkg.dev/docai-accelerator/cloud-run-source-deploy/app:latest"
     }
   }
 
   traffic {
     type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
     percent = 100
+    tag = "latest_web_app"
   }
 }
 
