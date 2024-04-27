@@ -48,6 +48,7 @@ resource "google_cloud_run_service_iam_member" "public" {
   member   = "user:alemnaru@deloittece.com"
 }
 
+
 ## Exporting the URL
 #output "url" {
 #  value = "${google_cloud_run_v2_service.web_app_test.uri}"
