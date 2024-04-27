@@ -1,10 +1,10 @@
 ## Cloud Run
 ## Activate Cloud Run API
-#resource "google_project_service" "cloud_run" {
-#  service  = "run.googleapis.com"
-#  project  = var.project
-#  disable_on_destroy = false
-#}
+resource "google_project_service" "cloud_run" {
+  service  = "run.googleapis.com"
+  project  = var.project
+  disable_on_destroy = false
+}
 
 ## Declare Cloud Run service
 resource "google_cloud_run_service" "web_app_test" {
@@ -47,7 +47,6 @@ resource "google_cloud_run_service_iam_member" "public" {
   role     = "roles/developer"
   member   = "user:alemnaru@deloittece.com"
 }
-
 
 ## Exporting the URL
 #output "url" {
