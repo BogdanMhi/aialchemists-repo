@@ -41,14 +41,14 @@ resource "google_cloud_run_service" "web_app_test" {
 
 ## Set IAM policy to be publicly accessible
 resource "google_cloud_run_service_iam_member" "public" {
-  project = google_cloud_run_service.web_app_test.project
+  project  = google_cloud_run_service.web_app_test.project
   location = google_cloud_run_service.web_app_test.location
-  name = google_cloud_run_service.web_app_test.name
-  role = "roles/run.developer"
-  member = "user:alemnaru@deloittece.com"
+  service  = google_cloud_run_service.web_app_test.name
+  role     = "roles/run.developer"
+  member   = "user:alemnaru@deloittece.com"
 }
 
 ## Exporting the URL
-output "url" {
-  value = "${google_cloud_run_v2_service.web_app_test.uri}"
-}
+#output "url" {
+#  value = "${google_cloud_run_v2_service.web_app_test.uri}"
+#}
