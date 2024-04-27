@@ -44,7 +44,7 @@ resource "google_cloud_run_v2_service_iam_member" "public" {
   project = google_cloud_run_v2_service.web_app_test.project
   location = google_cloud_run_v2_service.web_app_test.location
   name = google_cloud_run_v2_service.web_app_test.name
-  role = "roles/editor"
+  role = "roles/run.developer"
   member = "user:alemnaru@deloittece.com"
 }
 
