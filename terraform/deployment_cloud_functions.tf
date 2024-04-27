@@ -45,7 +45,7 @@ resource "google_cloudfunctions2_function" "document_handler" {
     available_memory   = var.document_handler_function_memory
     available_cpu      = "4"
     timeout_seconds    = 540
-    #all_traffic_on_latest_revision = true
+    all_traffic_on_latest_revision = true
   }
 
   event_trigger {
