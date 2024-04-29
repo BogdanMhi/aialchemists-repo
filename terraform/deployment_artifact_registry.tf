@@ -4,6 +4,7 @@
 #  project = "<YOUR_PROJECT_ID>"
 #}
 
+
 # Create an Artifact repository
 resource "google_artifact_registry_repository" "cf_repository" {
   project       = var.project_id
