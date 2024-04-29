@@ -1,7 +1,7 @@
 import os
 
 # General
-PROJECT_ID = os.environ.get("PROJECT_ID")
+PROJECT_ID = "docai-accelerator"
 
 # Pub/Sub
-TEXT_PROCESSOR_TRIGGER = os.environ.get("TEXT_PROCESSOR_TRIGGER")
+TEXT_PROCESSOR_TRIGGER = "text_processor_trigger"

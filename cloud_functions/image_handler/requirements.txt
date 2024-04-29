@@ -15,6 +15,8 @@ grpcio
 pytesseract
 tesseract
 opencv-python
-retry2
 pandas
 tensorflow
+gunicorn==22.0.0
+Werkzeug==3.0.1
+Flask==3.0.0
