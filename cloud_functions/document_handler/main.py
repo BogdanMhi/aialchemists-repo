@@ -1,3 +1,4 @@
+import json
 import base64
 import functions_framework
 import tika
@@ -36,7 +37,9 @@ def document_handler(cloud_event):
     # if link then parse
     # if file path then use bucket location to parse
 
-    file_name = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+    pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+    pubsub_message_json = json.loads(pubsub_message)
+    file_name = pubsub_message_json["file_path"]
 
     if ('http' or 'www') in file_name:
       output_text = extract_text_from_doc(file_name)
@@ -54,4 +57,9 @@ def document_handler(cloud_event):
     print(type(output_text))
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     print(output_text)
-    publish_message(TEXT_PROCESSOR_TRIGGER, output_text)
+    output_message = json.dumps({
+      "statement": pubsub_message_json["statement"],
+      "attachement_output": output_text,
+      "uuid": pubsub_message_json["uuid"]
+      })
+    publish_message(TEXT_PROCESSOR_TRIGGER, output_message)
