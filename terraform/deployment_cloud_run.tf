@@ -27,12 +27,10 @@ resource "google_cloud_run_service" "web_app_test" {
 }
 
 ## Set IAM policy to be publicly accessible
-data "google_iam_policy" "noauth" {
+data "google_iam_policy" "cloud_run_noauth" {
   binding {
     role = "roles/run.invoker"
-    members = [
-      "allUsers",
-    ]
+    members = ["allUsers",]
   }
 }
 
@@ -40,7 +38,7 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
   location    = google_cloud_run_service.web_app_test.location
   project     = google_cloud_run_service.web_app_test.project
   service     = google_cloud_run_service.web_app_test.name
-  policy_data = data.google_iam_policy.noauth.policy_data
+  policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
 }
 
 ## Exporting the URL

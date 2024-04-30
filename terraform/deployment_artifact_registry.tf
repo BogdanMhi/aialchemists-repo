@@ -15,11 +15,16 @@ resource "google_artifact_registry_repository" "cf_repository" {
 }
 
 # Grant permissions to all users to push images
-resource "google_artifact_registry_repository_iam_binding" "cloud_function_iam_binding" {
+data "google_iam_policy" "artifact_registry_editor" {
+  binding {
+    role = "roles/artifactregistry.writer"
+    members = ["allUsers",]
+  }
+}
+
+resource "google_artifact_registry_repository_iam_policy" "policy" {
+  project = google_artifact_registry_repository.cf_repository.project
+  location = google_artifact_registry_repository.cf_repository.location
   repository = google_artifact_registry_repository.cf_repository.name
-  location   = var.region
-  role       = "roles/artifactregistry.writer"
-  project    = var.project
-  members    = ["allUsers",]
-  #members = ["serviceAccount:${google_cloudfunctions_function.Cloud_function.service_account_email}"]
+  policy_data = data.google_iam_policy.artifact_registry_editor.policy_data
 }
