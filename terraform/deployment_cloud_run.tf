@@ -11,7 +11,6 @@ resource "google_cloud_run_service" "web_app_test" {
   name     = var.cloud_run_web_app_name
   location = var.region
   project  = var.project
-  #ingress = "INGRESS_TRAFFIC_ALL"
 
   template {
     spec {
@@ -24,7 +23,6 @@ resource "google_cloud_run_service" "web_app_test" {
   traffic {
     percent         = 100
     latest_revision = true
-    #tag = "latest-web-app"
   }
 }
 
