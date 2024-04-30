@@ -29,14 +29,14 @@ resource "google_cloud_run_service" "web_app_test" {
 }
 
 ## Set IAM policy to be editable by certain users
-#resource "google_cloud_run_service_iam_binding" "member-binding" {
-#  project  = var.project
-#  location = var.region
-#  service  = google_cloud_run_service.web_app_test.name
-#  role     = "roles/run.developer"
-#  members   = ["user:alemnaru@deloittece.com",]
-#  #members = ["allUsers",]
-#}
+resource "google_cloud_run_service_iam_binding" "member-binding" {
+  project  = var.project
+  location = var.region
+  service  = google_cloud_run_service.web_app_test.name
+  role     = "roles/run.viewer"
+  #members   = ["user:alemnaru@deloittece.com",]
+  members = ["allUsers",]
+}
 
 ## Exporting the URL
 output "cloud_run_service_url" {
