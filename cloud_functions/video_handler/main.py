@@ -1,3 +1,4 @@
+import re
 import whisper
 import json, base64
 import functions_framework
@@ -5,6 +6,10 @@ from google.cloud import storage
 from pytube import YouTube
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER
+
+storage_client = storage.Client()
+bucket = storage_client.get_bucket("ingestion_data_placeholder")
+model = whisper.load_model("small")
 
 @functions_framework.cloud_event
 def video_handler(cloud_event):
@@ -24,9 +29,6 @@ def video_handler(cloud_event):
     file_path = message_data.get("file_path", "")
 
     if file_path:
-        storage_client = storage.Client()
-        bucket = storage_client.get_bucket("whisper-data")
-        model = whisper.load_model("small")
         blob = bucket.get_blob(file_path)
         object_path = blob.name
         blob.download_to_filename(f"/tmp/{object_path}")
