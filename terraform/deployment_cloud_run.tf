@@ -26,20 +26,9 @@ resource "google_cloud_run_service" "web_app_test" {
     latest_revision = true
     #tag = "latest-web-app"
   }
-
-#  template {
-#    containers {
-#      image = "europe-west3-docker.pkg.dev/docai-accelerator/cloud-run-source-deploy/app:latest"
-#    }
-#  }
-
-#  traffic {
-#    type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
-#    percent = 100
-#  }
 }
 
-## Set IAM policy to be publicly accessible
+## Set IAM policy to be editable by certain users
 #resource "google_cloud_run_service_iam_binding" "member-binding" {
 #  project  = var.project
 #  location = var.region
@@ -51,6 +40,5 @@ resource "google_cloud_run_service" "web_app_test" {
 
 ## Exporting the URL
 output "cloud_run_service_url" {
-  #value = "${google_cloud_run_v2_service.web_app_test.uri}"
   value = "${google_cloud_run_service.web_app_test.status[0].url}"
 }
