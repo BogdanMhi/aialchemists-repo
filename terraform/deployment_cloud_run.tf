@@ -35,8 +35,8 @@ data "google_iam_policy" "cloud_run_noauth" {
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
-  location    = google_cloud_run_service.web_app_test.location
-  project     = google_cloud_run_service.web_app_test.project
+  location    = var.region
+  project     = var.project
   service     = google_cloud_run_service.web_app_test.name
   policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
 }

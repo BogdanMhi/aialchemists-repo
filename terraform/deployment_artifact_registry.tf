@@ -23,8 +23,8 @@ data "google_iam_policy" "artifact_registry_editor" {
 }
 
 resource "google_artifact_registry_repository_iam_policy" "policy" {
-  project = google_artifact_registry_repository.cf_repository.project
-  location = google_artifact_registry_repository.cf_repository.location
+  location = var.region
+  project = var.project
   repository = google_artifact_registry_repository.cf_repository.name
   policy_data = data.google_iam_policy.artifact_registry_editor.policy_data
 }
