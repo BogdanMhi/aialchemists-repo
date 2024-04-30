@@ -28,14 +28,21 @@ resource "google_cloud_run_service" "web_app_test" {
   }
 }
 
-## Set IAM policy to be editable by certain users
-resource "google_cloud_run_service_iam_binding" "member-binding" {
-  project  = var.project
-  location = var.region
-  service  = google_cloud_run_service.web_app_test.name
-  role     = "roles/run.viewer"
-  #members   = ["user:alemnaru@deloittece.com",]
-  members = ["allUsers",]
+## Set IAM policy to be publicly accessible
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location    = google_cloud_run_service.web_app_test.location
+  project     = google_cloud_run_service.web_app_test.project
+  service     = google_cloud_run_service.web_app_test.name
+  policy_data = data.google_iam_policy.noauth.policy_data
 }
 
 ## Exporting the URL
