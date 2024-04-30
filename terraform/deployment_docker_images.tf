@@ -22,7 +22,7 @@ resource "docker_image" "image_handler_build" {
 
 resource "docker_registry_image" "image_handler_registry_push" {
   name          = docker_image.image_handler_build.name
-  keep_remotely = true
+  #keep_remotely = true
 }
 
 #resource "docker_registry_image" "image_handler_image" {
