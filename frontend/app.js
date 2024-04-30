@@ -105,7 +105,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
     const textInput = req.body.textInput;
     console.log(req.session.user.uuid);
     const file = req.file; // Multer parses the file and stores the metadata in req.file
-    const postMessage = {};
+    const postMessage = {uuid: req.session.user.uuid};
 
     if (!textInput && !file) {
       return res.status(400).json({ message: 'No text input or file provided' });
@@ -114,7 +114,6 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
     if (textInput && !file) {
       console.log(`Text input: ${textInput}`);
       postMessage.statement = textInput;
-      postMessage.uuid = req.session.user.uuid;
       await updateDb(postMessage.statement, postMessage.uuid);
       await publishMessage('text_processor_trigger', JSON.stringify(postMessage));
       res.json({ message: 'Upload successful', data: postMessage });
