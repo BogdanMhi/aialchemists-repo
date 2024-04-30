@@ -1,17 +1,17 @@
-#terraform {
-#  required_providers {
-#    docker = {
-#      source = "kreuzwerker/docker"
-#      version = "~> 3.0.1"
-#    }
-#  }
-#}
+terraform {
+  required_providers {
+    docker = {
+      source = "kreuzwerker/docker"
+      version = "~> 3.0.1"
+    }
+  }
+}
 
-#provider "docker" {
-#  registry_auth {
-#    address  = "europe-west3-docker.pkg.dev"
-#  }
-#}
+provider "docker" {
+  registry_auth {
+    address  = "europe-west3-docker.pkg.dev"
+  }
+}
 
 resource "docker_image" "image_handler_build" {
   name = "europe-west3-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:1.0"
