@@ -1,0 +1,50 @@
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Upload and Chat</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Document Upload and Chat</h1>
+
+        <div class="chatbox">
+            <ul id="messageList">
+                <% messages.forEach(function(message) { %>
+                    <li><%= message.timestamp %> - <%= message.statement %></li>
+                <% }); %>
+            </ul>
+        </div>
+
+        <div class="upload-area">
+            <!-- Text input with placeholder -->
+            <input type="text" id="textInput" name="textInput" class="text-input" placeholder="Please ask your question here"><br><br>
+
+            <!-- Drag and drop box -->
+            <div id="drag-drop-box" class="drag-drop-box">
+                <div class="text" id="fileInfoText">Drag and Drop Files Here</div>
+                <button type="button" id="removeFileButton" style="display: none;">Remove File</button> <!-- Button to remove file -->
+                <input type="file" id="fileInput" name="fileInput" multiple style="display: none;"><br><br> <!-- File input field -->
+                <button type="button" id="fileSelectButton">Select File</button> <!-- Button to select file -->
+            </div>
+
+            <form id="uploadForm" enctype="multipart/form-data" style="margin-top: 20px;">
+                <input type="submit" value="Submit" class="submit-button"> <!-- Submit button -->
+            </form>
+        </div>
+
+        <div id="loadingScreen" class="loading-screen" style="display: none;">
+            <div class="loading-spinner"></div>
+        </div>
+        <div id="alertMessage" style="display: none; color: red;">Please provide some text.</div> <!-- Message display area -->
+    </div>
+    <!-- [START cloudrun_websockets_client] -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- [END cloudrun_websockets_client] -->
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/index.js"></script>
+</body>
+</html>
