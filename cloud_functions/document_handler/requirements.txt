@@ -2,3 +2,6 @@ google-cloud-storage
 google-cloud-pubsub
 functions-framework==3.*
 tika
+Flask==3.0.0
+gunicorn==22.0.0
+Werkzeug==3.0.1

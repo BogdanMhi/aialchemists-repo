@@ -1,8 +1,7 @@
 import json
 import base64
-import functions_framework
 import tika
-
+from flask import Flask, request
 from google.cloud import storage
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER
@@ -10,6 +9,8 @@ from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 tika.initVM()
 from tika import parser
+app = Flask(__name__)
+
 
 
 def extract_text_from_doc(file_path):
@@ -30,8 +31,7 @@ def extract_text_from_doc(file_path):
 # Triggered from a message on a Cloud Pub/Sub topic.
 client_storage = storage.Client()
 
-@functions_framework.cloud_event
-def document_handler(cloud_event):
+def document_handler(pubsub_message):
     """
     A cloud function that extracts the content of a document
 
@@ -44,7 +44,6 @@ def document_handler(cloud_event):
     # if link then parse
     # if file path then use bucket location to parse
 
-    pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
     pubsub_message_json = json.loads(pubsub_message)
     file_name = pubsub_message_json["file_path"]
 
@@ -64,3 +63,28 @@ def document_handler(cloud_event):
       "uuid": pubsub_message_json["uuid"]
       })
     publish_message(TEXT_PROCESSOR_TRIGGER, output_message)
+
+
+@app.route("/", methods=["POST"])
+def index():
+    """Receive and parse Pub/Sub messages."""
+    envelope = request.get_json()
+    if not envelope:
+        msg = "no Pub/Sub message received"
+        print(f"error: {msg}")
+        return f"Bad Request: {msg}", 200
+
+    if not isinstance(envelope, dict) or "message" not in envelope:
+        msg = "invalid Pub/Sub message format"
+        print(f"error: {msg}")
+        return f"Bad Request: {msg}", 200
+
+    pubsub_message = envelope["message"]
+    if isinstance(pubsub_message, dict) and "data" in pubsub_message:
+        message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
+        document_handler(message)
+
+    return ("", 200)
+
+if __name__ == '__main__':
+    app.run()
