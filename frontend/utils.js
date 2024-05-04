@@ -62,15 +62,18 @@ const chatHistory = async (uuid) => {
     return messages;
   };
   
-const updateDb = async (message, uuid) => {
+const updateDb = async (message, uuid, model_output=false) => {
   const timestamp = new Date().toLocaleString('en-US', {
     timeZone: 'Europe/Bucharest',
     hour12: false,
   });
-  const postMessage = { timestamp: timestamp,
-                  statement: message,
-  };
-  message.timestamp = timestamp;
+  let postMessage = { timestamp: timestamp };
+  if (model_output) {
+    postMessage.output = message;
+  } else {
+    postMessage.statement = message;
+  }
+  // message.timestamp = timestamp;
   await db.collection(uuid).add(postMessage);
   console.log('Message added to Firestore');
 };
