@@ -94,7 +94,7 @@ def text_processor(cloud_event):
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
                     The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
 
-                    If the question is out of context, please take a look at the history: {history}.
+                    If the question is out of context, please take a look at the full conversation you've had so far: {history}.
 
                     Human: Given the following information extracted from a document/video/audio/image/link: {input} I want you to answer the following request/question: {question}
                     {agent_scratchpad}"""
@@ -107,7 +107,7 @@ def text_processor(cloud_event):
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
                     The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
 
-                    If the question is out of context, please take a look at the history: {history}.
+                    If the question is out of context, please take a look at the full conversation you've had so far: {history}.
 
                     Human: Please answer the following request/question: {question}
                     {agent_scratchpad}"""
