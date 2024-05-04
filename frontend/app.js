@@ -115,7 +115,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
       console.log(`Text input: ${textInput}`);
       postMessage.statement = textInput;
       await updateDb(postMessage.statement, postMessage.uuid);
-      await publishMessage('text_processor_trigger', JSON.stringify(postMessage));
+      await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
       res.json({ message: 'Upload successful', data: postMessage });
     }
     else if (file) {
