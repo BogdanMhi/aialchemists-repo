@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 ENV PYTHONUNBUFFERED True
 COPY requirements.txt ./
 RUN apt-get update && apt-get install -y tesseract-ocr && apt-get install -y libgl1-mesa-glx
