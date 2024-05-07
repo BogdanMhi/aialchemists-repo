@@ -4,7 +4,7 @@ resource "docker_image" "image_handler_build" {
   build {
     context = var.image_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    #tag     = ["${var.image_handler_docker_image}:latest"]
+    tag = ["${var.image_handler_docker_image}:latest_image_handler"]
     }
   keep_remotely = true
 }
