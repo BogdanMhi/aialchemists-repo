@@ -5,7 +5,7 @@ resource "docker_registry_image" "image_handler_registry" {
 
 resource "docker_image" "image_handler_build" {
   provider = docker.docker_images
-  name = data.docker_registry_image.image_handler_registry.name
+  name = resource.docker_registry_image.image_handler_registry.name
   build {
     context = var.image_handler_dockerfile_location
     dockerfile = "Dockerfile"
