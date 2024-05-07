@@ -23,5 +23,7 @@ provider "docker" {
   alias = "docker_images"
   registry_auth {
     address  = "europe-west3-docker.pkg.dev"
+    username = "oauth2accesstoken"
+    password = data.google_service_account_access_token.access_token.access_token
   }
 }
