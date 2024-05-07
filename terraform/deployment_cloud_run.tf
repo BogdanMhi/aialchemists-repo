@@ -45,3 +45,24 @@ resource "google_cloud_run_service_iam_policy" "cr_noauth_policy" {
 output "cloud_run_service_url" {
   value = "${google_cloud_run_service.web_app_test.status[0].url}"
 }
+
+
+## image_handler
+resource "google_cloud_run_service" "image_handler_test" {
+  name     = var.cloud_run_image_handler_name
+  location = var.region
+  project  = var.project
+
+  template {
+    spec {
+      containers {
+        image = "${resource.docker_image.image_handler_build.name}:latest"
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
