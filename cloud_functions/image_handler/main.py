@@ -42,12 +42,13 @@ def extract_text_from_image(image_path):
     # Apply thresholding to binarize the image.
     _, thresholded = cv2.threshold(resized, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    custom_config = f"--oem {oem} --psm {psm}"  # Set PSM and OEM
+    custom_config_var = f"--oem {oem} --psm {psm}"  # Set PSM and OEM
     # Use pytesseract to extract text from the image
-    text = pytesseract.image_to_string(thresholded, config=custom_config)
+    text = pytesseract.image_to_string(thresholded, config=custom_config_var)
 
     # Check if the text is empty or contains only whitespace
     return text
+
 
 def image_handler(pubsub_message):
     pubsub_message_json = json.loads(pubsub_message)
@@ -67,6 +68,7 @@ def image_handler(pubsub_message):
         "uuid": pubsub_message_json["uuid"]
         })
     publish_message(TEXT_PROCESSOR_TRIGGER, output_message)
+
 
 @app.route("/", methods=["POST"])
 def index():
