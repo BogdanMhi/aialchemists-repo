@@ -1,6 +1,7 @@
 import os
 import json
 import base64
+import re
 import functions_framework
 from google.cloud import firestore
 from google.cloud import bigquery
@@ -45,6 +46,10 @@ def extract_all_documents_from_collection(project_id, database_id, collection_na
  
     return documents
 
+def remove_urls(text):
+    url_pattern = re.compile(r'(https?://\S+|www\.\S+)')
+    return url_pattern.sub('', text)
+
 @functions_framework.cloud_event
 def text_processor(cloud_event):
     """
@@ -58,7 +63,7 @@ def text_processor(cloud_event):
     """
     pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
     pubsub_message = json.loads(pubsub_message)
-    statement = pubsub_message['statement']
+    statement = remove_urls(pubsub_message['statement'])
     uuid = pubsub_message['uuid']
     # to be used in attachement_output
     attachement_output = pubsub_message.get('attachement_output', '')
@@ -84,39 +89,34 @@ def text_processor(cloud_event):
         print("Processing question with attachment")
         template = """The following is a friendly conversation between a human and an AI.
                     The AI is a medical engine with accurate and up-to-date medical knowledge that will only answer to medical related questions.
-                    The AI will always answer to greetings.
+                    The AI will always answer to greetings and the questions about previous inquiries/requests addressed by the human.
                     If the question is abstract or ambiguous, the AI will ask the human for more context.
-                    If the AI receives a non-medical question, apart from greetings, it says that the question is not related to the medical field and asks the human if he wants to adress another question.
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
                     The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
 
-                    Current conversation:
-                    {history}
+                    If the question is out of context, please take a look at the full conversation you've had so far: {history}.
 
-                    Human: Given the following: {input}
-                    I want you to answer the following question: {question}
+                    Human: Given the following information extracted from a document/video/audio/image/link: {input} I want you to answer the following request/question: {question}
                     {agent_scratchpad}"""
     else:
         print("Processing question")
         template = """The following is a friendly conversation between a human and an AI. 
                     The AI is a medical engine with accurate and up-to-date medical knowledge that will only answer to medical related questions.
-                    The AI will always answer to greetings.
+                    The AI will always answer to greetings and the questions about previous inquiries/requests addressed by the human.
                     If the question is abstract or ambiguous, the AI will ask the human for more context.
-                    If the AI receives a non-medical question, apart from greetings, it says that the question is not related to the medical field and asks the human if he wants to adress another question.
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
-                    The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query
+                    The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
 
-                    Current conversation:
-                    {history}
+                    If the question is out of context, please take a look at the full conversation you've had so far: {history}.
 
-                    Human: Please answer the following question: {question}
+                    Human: Please answer the following request/question: {question}
                     {agent_scratchpad}"""
 
     prompt = PromptTemplate(input_variables=["question"], template=template)
     history = extract_all_documents_from_collection(PROJECT_ID, FIRESTORE_DATABASE_ID, uuid)
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
+    
     result = agent_executor.invoke({"question": statement, "input": attachement_output, "history": history})
     output_model = result['output']
 

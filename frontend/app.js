@@ -115,7 +115,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
       console.log(`Text input: ${textInput}`);
       postMessage.statement = textInput;
       await updateDb(postMessage.statement, postMessage.uuid);
-      await publishMessage('text_processor_trigger', JSON.stringify(postMessage));
+      await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
       res.json({ message: 'Upload successful', data: postMessage });
     }
     else if (file) {
@@ -141,7 +141,7 @@ app.post('/model', async (req, res) => {
     const response = req.body.response;
     const uuid = req.body.uuid;
     console.log(`Response model: ${response}`);
-    await updateDb(response, uuid);
+    await updateDb(response, uuid, model_output=true);
     // await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
     io.emit('notification', response);
     res.status(200).json({ message: 'Notification sent successfully' });

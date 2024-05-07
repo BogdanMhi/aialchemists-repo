@@ -3,16 +3,30 @@ import base64
 import tika
 from flask import Flask, request
 from google.cloud import storage
+from google.cloud import bigquery
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 
 
 tika.initVM()
 from tika import parser
 app = Flask(__name__)
 
+bq_client = bigquery.Client(project=PROJECT_ID)
 
-
+def check_events_duplicates(context):
+    context = json.loads(context)
+    event_id = context['event_id']
+    table_id = f"{PROJECT_ID}.idempotency.document_handler_msg_ids"
+    query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
+    results = bq_client.query(query)
+    for row in results:
+        if row[0]>0:
+            return True
+        else:
+            bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
+            return False
+        
 def extract_text_from_doc(file_path):
   """
     Function to extract text from any file. 
@@ -82,7 +96,8 @@ def index():
     pubsub_message = envelope["message"]
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
-        document_handler(message)
+        if not check_events_duplicates:
+            document_handler(message)
 
     return ("", 200)
 
