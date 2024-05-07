@@ -12,3 +12,11 @@ provider "google" {
   region  = var.region
   # zone    = var.zone
 }
+
+provider "docker" {
+  registry_auth {
+    address  = "europe-west3-docker.pkg.dev"
+  }
+  project = var.project
+  region  = var.region
+}
