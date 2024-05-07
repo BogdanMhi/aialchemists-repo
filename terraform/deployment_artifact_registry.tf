@@ -7,7 +7,7 @@ resource "google_project_service" "enable_artifact_registry_api" {
 # Create an Artifact repository
 resource "google_artifact_registry_repository" "cf_repository" {
   project       = var.project
-  location      = var.region
+  location      = "europe-west1" #var.region
   repository_id = var.cloud_functions_repository_name
   format        = "DOCKER"
   description   = "Repository for cloud functions"
@@ -22,7 +22,7 @@ data "google_iam_policy" "artifact_registry_admin" {
 }
 
 resource "google_artifact_registry_repository_iam_policy" "ar_admin_policy" {
-  location = var.region
+  location = "europe-west1" #var.region
   project = var.project
   repository = google_artifact_registry_repository.cf_repository.name
   policy_data = data.google_iam_policy.artifact_registry_admin.policy_data
