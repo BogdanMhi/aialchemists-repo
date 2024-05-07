@@ -16,7 +16,7 @@ resource "google_storage_bucket_object" "document_handler_sourcecode" {
 }
 
 resource "google_cloudfunctions2_function" "document_handler" {
-  location = "europe-west1"
+  location = var.region
   name     = var.document_handler_function_name
   project  = var.project
 
@@ -132,7 +132,7 @@ resource "google_storage_bucket_object" "image_handler_sourcecode" {
 }
 
 resource "google_cloudfunctions2_function" "image_handler" {
-  location = "europe-west1"
+  location = var.region
   name     = var.image_handler_function_name
   project  = var.project
 
