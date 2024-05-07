@@ -2,6 +2,8 @@
 variable vpc_access_connector {}
 variable vpc_egress {default = "ALL_TRAFFIC"}
 variable ingress_selection {default = "ALLOW_INTERNAL_ONLY"}
+variable cloud_functions_sa_id {default = "cloudfunctions"}
+variable cloud_functions_sa_display {default = "GCF Service Account"}
 
 ## document_handler
 variable document_handler_function_name {default = "document_handler"}

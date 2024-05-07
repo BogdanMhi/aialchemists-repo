@@ -34,7 +34,5 @@ resource "google_artifact_registry_repository_iam_binding" "cloud_function_iam_b
   project    = var.project
   repository = google_artifact_registry_repository.cf_repository.name
   role       = "roles/artifactregistry.writer"
-  members = [
-    "serviceAccount:${google_cloudfunctions_function.Cloud_function.service_account_email}"
-  ]
+  members = ["serviceAccount:${google_service_account.cloud_functions.email}"]
 }

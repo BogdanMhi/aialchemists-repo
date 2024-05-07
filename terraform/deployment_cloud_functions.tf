@@ -1,3 +1,11 @@
+## Create Service Account for Cloud Functions
+resource "google_service_account" "cloud_functions" {
+  project = var.project
+  account_id = var.cloud_functions_sa_id
+  display_name = var.cloud_functions_sa_display
+  description = "Service Account for Cloud Functions"
+}
+
 ## document_handler
 data "archive_file" "zip_document_handler" {
   type        = "zip"
