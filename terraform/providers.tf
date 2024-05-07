@@ -5,6 +5,12 @@ terraform {
     bucket = "tf_state_8d85fe"
     prefix = "terraform/state"
   }
+
+  required_providers {
+    google = {source = "hashicorp/google"}
+    random = {source = "hashicorp/random"}
+    docker = {source = "kreuzwerker/docker"}
+  }
 }
 
 provider "google" {
