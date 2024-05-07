@@ -1,3 +1,5 @@
+data "google_client_config" "default" {}
+
 terraform {
   required_version = ">= 0.13"
 
@@ -24,6 +26,6 @@ provider "docker" {
   registry_auth {
     address  = "europe-west3-docker.pkg.dev"
     username = "oauth2accesstoken"
-    password = data.google_service_account_access_token.access_token.access_token
+    password = data.google_client_config.default.access_token
   }
 }
