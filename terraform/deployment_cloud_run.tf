@@ -56,7 +56,7 @@ resource "google_cloud_run_service" "image_handler_test" {
   template {
     spec {
       containers {
-        image = "${resource.docker_image.image_handler_build.name}:latest"
+        image = "${resource.docker_image.image_handler_build.name}:latest_image_handler"
       }
     }
   }
@@ -65,4 +65,6 @@ resource "google_cloud_run_service" "image_handler_test" {
     percent         = 100
     latest_revision = true
   }
+
+  depends_on = [ resource.docker_registry_image.image_handler_registry ]
 }
