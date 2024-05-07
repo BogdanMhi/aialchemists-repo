@@ -6,10 +6,10 @@ resource "docker_image" "image_handler_build" {
     dockerfile = "Dockerfile"
     tag = ["${var.image_handler_docker_image}:latest_image_handler"]
     }
-  keep_remotely = true
 }
 
 resource "docker_registry_image" "image_handler_registry" {
   provider = docker.docker_images
   name = resource.docker_image.image_handler_build.name
+  keep_remotely = true
 }
