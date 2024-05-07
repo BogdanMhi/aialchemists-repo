@@ -17,8 +17,8 @@ resource "google_artifact_registry_repository" "cf_repository" {
 data "google_iam_policy" "artifact_registry_admin" {
   binding {
     role = "roles/artifactregistry.admin"
-    #members = ["allUsers",]
-    members = ["serviceAccount:${google_service_account.cloud_functions.email}"]
+    members = ["allUsers",]
+    #members = ["serviceAccount:${google_service_account.cloud_functions.email}"]
   }
 }
 
