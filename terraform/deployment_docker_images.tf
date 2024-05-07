@@ -6,7 +6,7 @@ resource "docker_image" "image_handler_build" {
     dockerfile = "Dockerfile"
     #tag     = ["${var.image_handler_docker_image}:latest"]
     }
-  #keep_locally = true
+  keep_remotely = true
 }
 
 resource "docker_registry_image" "image_handler_registry" {
