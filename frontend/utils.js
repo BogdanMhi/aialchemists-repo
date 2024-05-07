@@ -103,21 +103,28 @@ const uploadFileToBucket = async (file, bucketName, destinationBlobName) => {
 };
 
 const queryBigquery = async(username, password) => {
-  const hashedPassword = hashPassword(password);
-  console.log(username);
-  console.log(password);
-  const query = `
-      SELECT user_id, uuid
-      FROM \`docai-accelerator.ai_alchemists_user_table.users\`
-      WHERE user_id = '${username}'
-      AND password = '${hashedPassword}'
-      LIMIT 1
-  `;
+  let query;
+  if (password) {
+    const hashedPassword = hashPassword(password);
+    query = `
+        SELECT user_id, uuid
+        FROM \`docai-accelerator.ai_alchemists_user_table.users\`
+        WHERE user_id = '${username}'
+        AND password = '${hashedPassword}'
+        LIMIT 1
+    `;
+  } else {
+    query = `
+        SELECT user_id, uuid
+        FROM \`docai-accelerator.ai_alchemists_user_table.users\`
+        WHERE user_id = '${username}'
+        LIMIT 1
+    `;
+  }
+
   console.log(query);
-  // Parameters for the query
   // Run the query
-  const [rows] = await bigquery.query(query, {location: "europe-west3"});
-  // console.log(rows);
+  const [rows] = await bigquery.query(query, { location: "europe-west3" });
   return rows;
 };
 
