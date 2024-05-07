@@ -1,4 +1,4 @@
-data "docker_registry_image" "image_handler_registry" {
+resource "docker_registry_image" "image_handler_registry" {
   provider = docker.docker_images
   name = "europe-west3-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:latest"
 }
