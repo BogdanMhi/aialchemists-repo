@@ -20,9 +20,8 @@ provider "google" {
 }
 
 provider "docker" {
+  #alias = "docker_images"
   registry_auth {
     address  = "europe-west3-docker.pkg.dev"
   }
-  project = var.project
-  region  = var.region
 }
