@@ -77,7 +77,7 @@ document.getElementById('registerButton').addEventListener('click', async functi
 
     if (!response.ok) {
         // Display error message if registration fails
-        outputMessage.textContent = 'Failed to register user. Please try again.';
+        outputMessage.textContent = 'User already registered!';
         outputMessage.classList.remove('success-message');
         outputMessage.classList.add('error-message');
         outputMessage.style.display = 'block';

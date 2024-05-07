@@ -67,16 +67,21 @@ app.post('/login', async (req, res) => {
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const result = await registerDbUser(username, password);
-    if (result.success) {
-      res.status(201).json({ message: 'User registered successfully', userId: result.uuid });
+    rows = await queryBigquery(username);
+    if (rows.length > 0 ) {
+      res.status(401).json({ success: false, message: 'User already registered' });
     } else {
-      res.status(500).json({ message: 'Registration failed', error: result.error });
-    }
+        const result = await registerDbUser(username, password);
+        if (result.success) {
+          res.status(201).json({ message: 'User registered successfully', userId: result.uuid });
+        } else {
+          res.status(500).json({ message: 'Registration failed', error: result.error });
+        }
+      }
   } catch (error) {
     console.error('Error in registration process:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
+    }
 });
 
 // Serve frontend
