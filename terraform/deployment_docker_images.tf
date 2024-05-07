@@ -14,6 +14,5 @@ resource "docker_image" "image_handler_build" {
 resource "docker_registry_image" "image_handler_registry" {
   provider = docker.docker_images
   name = resource.docker_image.image_handler_build.name
-  pull_triggers = [resource.docker_image.image_handler_build.sha256_digest]
   keep_remotely = true
 }
