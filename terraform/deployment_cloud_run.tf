@@ -56,7 +56,7 @@ resource "google_cloud_run_service" "image_handler_test" {
   template {
     spec {
       containers {
-        image = "${resource.docker_image.image_handler_build.name}:latest_image_handler"
+        image = "${resource.docker_image.image_handler_build.name}:latest"
       }
     }
   }

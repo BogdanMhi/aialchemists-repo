@@ -24,7 +24,7 @@ data "google_iam_policy" "artifact_registry_admin" {
 
 resource "google_artifact_registry_repository_iam_policy" "ar_admin_policy" {
   location = var.region
-  project = var.project
+  project  = var.project
   repository = google_artifact_registry_repository.cf_repository.name
   policy_data = data.google_iam_policy.artifact_registry_admin.policy_data
 }
