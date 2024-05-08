@@ -48,6 +48,13 @@ resource "google_project_service" "cloud_run" {
 
 
 ## image_handler
+resource "google_cloud_run_service_iam_member" "image_handler_member" {
+  location = google_cloudfunctions2_function.image_handler.location
+  service  = google_cloudfunctions2_function.image_handler.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
 resource "google_cloud_run_service" "image_handler_test" {
   name     = var.cloud_run_image_handler_name
   location = var.region
@@ -66,5 +73,8 @@ resource "google_cloud_run_service" "image_handler_test" {
     latest_revision = true
   }
 
-  depends_on = [ resource.docker_registry_image.image_handler_registry ]
+  depends_on = [ 
+    resource.docker_registry_image.image_handler_registry,
+    google_cloudfunctions2_function.image_handler
+  ]
 }
