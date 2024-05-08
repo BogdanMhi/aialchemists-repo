@@ -150,6 +150,7 @@ resource "google_cloudfunctions2_function" "image_handler" {
   }
 
   build_config {
+    docker_repository = google_artifact_registry_repository.cf_repository.id
     runtime     = var.image_handler_python_version
     entry_point = var.image_handler_entry_point
     source {
@@ -180,7 +181,9 @@ resource "google_cloudfunctions2_function" "image_handler" {
   }
 
   depends_on = [
-    google_storage_bucket_object.image_handler_sourcecode
+    google_storage_bucket_object.image_handler_sourcecode,
+    google_artifact_registry_repository.cf_repository,
+    docker_registry_image.image_handler_registry
   ]
 }
 
