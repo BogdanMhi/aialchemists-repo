@@ -6,8 +6,9 @@ from PIL import Image
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request
 from google.cloud import storage
+from google.cloud import bigquery
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 
 
 app = Flask(__name__)
@@ -19,7 +20,18 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 
+bq_client = bigquery.Client(project=PROJECT_ID)
 
+def check_events_duplicates(event_id):
+    table_id = f"{PROJECT_ID}.idempotency.image_handler_msg_ids"
+    query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
+    results = bq_client.query(query)
+    for row in results:
+        if row[0]>0:
+            return True
+        else:
+            bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
+            return False
 
 def extract_content_from_image(image_path):
     """
@@ -72,7 +84,9 @@ def index():
     pubsub_message = envelope["message"]
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
-        image_handler(message)
+        context = pubsub_message["message_id"]
+        if not check_events_duplicates(context):
+            image_handler(message)
 
     return ("", 200)
 

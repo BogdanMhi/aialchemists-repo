@@ -1,6 +1,7 @@
 functions-framework==3.*
 google-cloud-storage
 google-cloud-pubsub
+google-cloud-bigquery
 torch
 pillow
 transformers
