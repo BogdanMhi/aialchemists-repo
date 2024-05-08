@@ -7,44 +7,44 @@ resource "google_project_service" "cloud_run" {
 }
 
 ## Declare Cloud Run service
-resource "google_cloud_run_service" "web_app_test" {
-  name     = var.cloud_run_web_app_name
-  location = var.region
-  project  = var.project
+#resource "google_cloud_run_service" "web_app_test" {
+#  name     = var.cloud_run_web_app_name
+#  location = var.region
+#  project  = var.project
 
-  template {
-    spec {
-      containers {
-        image = "europe-west3-docker.pkg.dev/docai-accelerator/cloud-run-source-deploy/app:latest"
-      }
-    }
-  }
+#  template {
+#    spec {
+#      containers {
+#        image = "europe-west3-docker.pkg.dev/docai-accelerator/cloud-run-source-deploy/app:latest"
+#      }
+#    }
+#  }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
-}
+#  traffic {
+#    percent         = 100
+#    latest_revision = true
+#  }
+#}
 
 ## Set IAM policy to be publicly accessible
-data "google_iam_policy" "cloud_run_noauth" {
-  binding {
-    role = "roles/run.invoker"
-    members = ["allUsers",]
-  }
-}
+#data "google_iam_policy" "cloud_run_noauth" {
+#  binding {
+#    role = "roles/run.invoker"
+#    members = ["allUsers",]
+#  }
+#}
 
-resource "google_cloud_run_service_iam_policy" "cr_noauth_policy" {
-  location    = var.region
-  project     = var.project
-  service     = google_cloud_run_service.web_app_test.name
-  policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
-}
+#resource "google_cloud_run_service_iam_policy" "cr_noauth_policy" {
+#  location    = var.region
+#  project     = var.project
+#  service     = google_cloud_run_service.web_app_test.name
+#  policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
+#}
 
 ## Exporting the URL
-output "cloud_run_service_url" {
-  value = "${google_cloud_run_service.web_app_test.status[0].url}"
-}
+#output "cloud_run_service_url" {
+#  value = "${google_cloud_run_service.web_app_test.status[0].url}"
+#}
 
 
 ## image_handler
