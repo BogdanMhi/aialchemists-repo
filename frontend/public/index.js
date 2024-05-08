@@ -16,6 +16,46 @@ const options = {
     hour12: true,
   };
 
+// Drag and drop functionality
+const dragDropBox = document.getElementById('drag-drop-box');
+const fileInfoText = document.getElementById('fileInfoText');
+const removeFileButton = document.getElementById('removeFileButton');
+const newConversationButton = document.getElementById('newConversationButton');
+const fileInput = document.getElementById('fileInput');
+const fileSelectButton = document.getElementById('fileSelectButton');
+const messageList = document.getElementById('messageList');
+
+
+// Function to hide file input and select file button
+function hideFileInput() {
+    fileInput.disabled = true; // Disable file input
+    fileSelectButton.style.display = 'none'; // Hide select file button
+}
+
+// Function to handle dropped or selected files
+function handleFiles(files) {
+    // Handle the dropped or selected files here (e.g., upload to server)
+    console.log('File:', files[0]);
+}
+
+// Function to show file input and select file button
+function showFileInput() {
+    fileInput.disabled = false; // Enable file input
+    fileSelectButton.style.display = 'inline-block'; // Show select file button
+}
+
+function resetFileInput() {
+    fileInput.disabled = true; // Enable file input
+    fileInput.value = ''; // Clear selected file
+    fileInfoText.textContent = 'Drag and Drop Files Here'; // Reset file info text
+    removeFileButton.style.display = 'none'; // Hide remove file button
+    // Show file input and select file button
+    showFileInput();
+    // Reset fileUploaded flag to false if needed
+    fileUploaded = false; // If fileUploaded is a global variable, uncomment this line
+}
+
+
 function toggleLoadingScreen() {
     const loadingScreen = document.getElementById('loadingScreen');
     if (window.getComputedStyle(loadingScreen).display === 'flex') {
@@ -29,7 +69,8 @@ function toggleLoadingScreen() {
 socket.on('notification', function(message) {
     // Update the UI with the received message
     toggleLoadingScreen();
-    const messageList = document.getElementById('messageList');
+    resetFileInput();
+    
     const newItem = document.createElement('li');
     const timestamp = new Date().toLocaleTimeString('en-US', options);
     newItem.textContent = `${timestamp} - ${message}`;
@@ -47,7 +88,6 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     // Add the entered text to the list
     if (textInput) {
-        const messageList = document.getElementById('messageList');
         const listItem = document.createElement('li');
         listItem.textContent = `${timestamp} - ${textInput}`;
         messageList.appendChild(listItem);
@@ -111,14 +151,6 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
     console.log('Text Input:', textInput);
 });
 
-
-// Drag and drop functionality
-const dragDropBox = document.getElementById('drag-drop-box');
-const fileInfoText = document.getElementById('fileInfoText');
-const removeFileButton = document.getElementById('removeFileButton');
-const fileInput = document.getElementById('fileInput');
-const fileSelectButton = document.getElementById('fileSelectButton');
-
 dragDropBox.addEventListener('dragover', (event) => {
     event.preventDefault();
     dragDropBox.classList.add('dragover');
@@ -150,6 +182,30 @@ dragDropBox.addEventListener('drop', (event) => {
     hideFileInput();
 });
 
+newConversationButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/newconversation', {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            console.error('Request failed with status:', response.status);
+            return; // Stop further execution
+        }
+        while (messageList.firstChild) {
+            messageList.removeChild(messageList.firstChild);
+        }
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+// Button to remove file
+removeFileButton.addEventListener('click', () => {
+    resetFileInput();
+});
+
 // Button to select files
 document.getElementById('fileSelectButton').addEventListener('click', () => {
     fileInput.click();
@@ -157,15 +213,7 @@ document.getElementById('fileSelectButton').addEventListener('click', () => {
 
 // Button to remove file
 removeFileButton.addEventListener('click', () => {
-    fileInput.value = ''; // Clear selected file
-    fileInfoText.textContent = 'Drag and Drop Files Here'; // Reset file info text
-    removeFileButton.style.display = 'none'; // Hide remove file button
-
-    // Show file input and select file button
-    showFileInput();
-
-    // Reset fileUploaded flag to false
-    fileUploaded = false;
+    resetFileInput();
 });
 
 // File input change event listener
@@ -187,21 +235,3 @@ fileInput.addEventListener('change', () => {
     // Hide file input and select file button
     hideFileInput();
 });
-
-// Function to handle dropped or selected files
-function handleFiles(files) {
-    // Handle the dropped or selected files here (e.g., upload to server)
-    console.log('File:', files[0]);
-}
-
-// Function to hide file input and select file button
-function hideFileInput() {
-    fileInput.disabled = true; // Disable file input
-    fileSelectButton.style.display = 'none'; // Hide select file button
-}
-
-// Function to show file input and select file button
-function showFileInput() {
-    fileInput.disabled = false; // Enable file input
-    fileSelectButton.style.display = 'inline-block'; // Show select file button
-}

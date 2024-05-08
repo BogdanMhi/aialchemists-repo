@@ -1,7 +1,14 @@
 const multer = require('multer');
 const express = require('express');
 
-const { chatHistory, updateDb, publishMessage, uploadFileToBucket, queryBigquery, registerDbUser } = require('./utils');
+const { 
+  chatHistory, 
+  updateDb, 
+  publishMessage, 
+  uploadFileToBucket, 
+  queryBigquery, 
+  registerDbUser,
+  cleanUserConversation } = require('./utils');
 
 
 
@@ -41,6 +48,18 @@ function isAuthenticated(req, res, next) {
       res.redirect('/login');
   }
 }
+
+app.get('/newconversation', isAuthenticated, async (req, res) => {
+  try {
+      cleanUserConversation(req.session.user.uuid);
+      console.log("I'm here!")
+      res.status(200).json({ success: true});
+  } catch (error) {
+      // Handle any errors that occur during the process of starting a new conversation
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;

@@ -18,6 +18,21 @@ function hashPassword(password) {
   return crypto.createHash('md5').update(password).digest('hex');
 }
 
+const cleanUserConversation = async (collectionName) => {
+  const collectionRef = db.collection(collectionName);
+  const querySnapshot = await collectionRef.get();
+
+  // Delete all documents in the collection
+  const batch = db.batch();
+  querySnapshot.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  // Commit the batch operation
+  await batch.commit();
+  console.log(`All documents removed from collection ${collectionName}`);
+};
+
+
 const createDbCollection = async (collectionName) => {
   try {
     await db.collection(collectionName).doc().set({});
@@ -135,4 +150,5 @@ module.exports = {
   uploadFileToBucket,
   queryBigquery,
   registerDbUser,
+  cleanUserConversation,
 };
