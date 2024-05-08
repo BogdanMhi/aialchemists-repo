@@ -52,7 +52,7 @@ resource "google_cloud_run_service_iam_member" "image_handler_member" {
   #for_each = toset(concat(var.invokers, var.public == true ? ["allUsers"] : []))
   project  = var.project
   location = var.region
-  service  = regex(google_cloudfunctions2_function.image_handler.name, google_cloudfunctions2_function.image_handler.id)
+  service  = google_cloudfunctions2_function.image_handler.service_config[0].service
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
