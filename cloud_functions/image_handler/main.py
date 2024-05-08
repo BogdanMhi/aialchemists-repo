@@ -49,7 +49,6 @@ def extract_text_from_image(image_path):
     # Check if the text is empty or contains only whitespace
     return text
 
-
 def image_handler(pubsub_message):
     pubsub_message_json = json.loads(pubsub_message)
     file_path_blob = pubsub_message_json["file_path"]
@@ -68,7 +67,6 @@ def image_handler(pubsub_message):
         "uuid": pubsub_message_json["uuid"]
         })
     publish_message(TEXT_PROCESSOR_TRIGGER, output_message)
-
 
 @app.route("/", methods=["POST"])
 def index():
