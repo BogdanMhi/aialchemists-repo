@@ -2,8 +2,8 @@ import os
 import json
 import base64
 import json
-import cv2
-import pytesseract
+from PIL import Image
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request
 from google.cloud import storage
 from utilities.publisher import publish_message
@@ -12,10 +12,16 @@ from utilities.settings import TEXT_PROCESSOR_TRIGGER
 
 app = Flask(__name__)
 client_storage = storage.Client()
-os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tessdata'
+model_id = "vikhyatk/moondream2"
+revision = "2024-04-02"
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, trust_remote_code=True, revision=revision
+)
+tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 
 
-def extract_text_from_image(image_path):
+
+def extract_content_from_image(image_path):
     """
     Docstrings
 
@@ -24,30 +30,11 @@ def extract_text_from_image(image_path):
     Returns:
 
     """
-    # Configurables
-    oem = 3
-    psm = 1
-    scale_percent = 40
-
-    image = cv2.imread(image_path)
-
-    # Convert the image to grayscale.
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Resize the image based on the scale percent
-    width = int(gray.shape[1] * scale_percent / 100)
-    height = int(gray.shape[0] * scale_percent / 100)
-    resized = cv2.resize(gray, (width, height), interpolation=cv2.INTER_AREA)
-
-    # Apply thresholding to binarize the image.
-    _, thresholded = cv2.threshold(resized, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-    custom_config = f"--oem {oem} --psm {psm}"  # Set PSM and OEM
-    # Use pytesseract to extract text from the image
-    text = pytesseract.image_to_string(thresholded, config=custom_config)
-
+    image = Image.open(image_path)
+    enc_image = model.encode_image(image)
+    image_context = model.answer_question(enc_image, "Describe this image.", tokenizer)
     # Check if the text is empty or contains only whitespace
-    return text
+    return image_context
 
 def image_handler(pubsub_message):
     pubsub_message_json = json.loads(pubsub_message)
@@ -57,7 +44,7 @@ def image_handler(pubsub_message):
     image_blob = image_bucket.get_blob(file_path_blob)
     file_path = f"/tmp/{file_path_blob.split('/')[-1]}"
     image_blob.download_to_filename(file_path)
-    output_text = extract_text_from_image(file_path)
+    output_text = extract_content_from_image(file_path)
     cleaned_output_text = " ".join(output_text.split())
 
     print(cleaned_output_text)
