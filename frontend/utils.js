@@ -68,14 +68,18 @@ const chatHistory = async (uuid) => {
     const messages = [];
     const querySnapshot = await messagesRef.get();
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const timestamp = new Date(data.timestamp);
-      const hoursMinutes = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const message = { statement: data.statement, timestamp: hoursMinutes };
-      messages.push(message);
+        const data = doc.data();
+        const timestamp = new Date(data.timestamp);
+        const hoursMinutes = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Check if 'output' key exists, use it if available, otherwise fallback to 'statement'
+        const messageContent = data.output ? data.output : data.statement;
+
+        const message = { statement: messageContent, timestamp: hoursMinutes };
+        messages.push(message);
     });
     return messages;
-  };
+};
   
 const updateDb = async (message, uuid, model_output=false) => {
   const timestamp = new Date().toLocaleString('en-US', {
