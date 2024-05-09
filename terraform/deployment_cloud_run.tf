@@ -6,6 +6,63 @@ resource "google_project_service" "cloud_run_api" {
   disable_on_destroy = false
 }
 
+## web-app FE
+resource "google_cloud_run_v2_service" "web_app" {
+  name     = var.cloud_run_web_app_name
+  location = var.region
+  project  = var.project
+  ingress = "INGRESS_TRAFFIC_ALL"
+
+  template {
+    scaling {max_instance_count = 100}
+    timeout = "3600s"
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project}/cloud-run-source-deploy/app:latest"
+
+      startup_probe {
+        initial_delay_seconds = 0
+        timeout_seconds = 240
+        failure_threshold = 1
+        tcp_socket {port = 8080}
+      }
+
+      resources {
+        startup_cpu_boost = true
+        cpu_idle = true
+        limits = {
+          cpu    = "4"
+          memory = "8Gi"
+        }
+      }
+    }
+  }
+
+  traffic {
+    type = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+#  depends_on = [ 
+#    resource.docker_image.web_app_build,
+#    resource.docker_registry_image.web_app_push
+#  ]
+}
+
+## Set IAM policy to be publicly accessible
+data "google_iam_policy" "cloud_run_noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = ["allUsers",]
+  }
+}
+
+resource "google_cloud_run_v2_service_iam_policy" "cr_noauth_policy" {
+  location    = var.region
+  project     = var.project
+  name        = google_cloud_run_v2_service.web_app.name
+  policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
+}
+
 ## document_handler
 resource "google_cloud_run_v2_service" "document_handler" {
   name     = var.cloud_run_document_handler_name
@@ -65,14 +122,6 @@ resource "google_cloud_run_v2_service" "document_handler" {
 }
 
 ## image_handler
-#resource "google_cloud_run_service_iam_member" "image_handler_member" {
-#  project  = var.project
-#  location = var.region
-#  service  = google_cloudfunctions2_function.image_handler.service_config[0].service
-#  role     = "roles/run.invoker"
-#  member   = "allUsers"
-#}
-
 resource "google_cloud_run_v2_service" "image_handler" {
   name     = var.cloud_run_image_handler_name
   location = var.region
