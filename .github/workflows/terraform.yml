@@ -40,12 +40,10 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
 
     - name: "build-docker-image"
-      timeout: 3600s
       uses: "./cloud_functions/image_handler/Dockerfile"
       args: ["build", "-t", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}", "./cloud_functions/image_handler/Dockerfile"]
 
     - name: "push-docker-image"
-      timeout: 3600s
       run: ["push", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}"]
       waitFor: ["build-docker-image"]
 
