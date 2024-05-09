@@ -31,5 +31,8 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
       topic = "projects/${var.project}/topics/${google_pubsub_topic.document_handler_function.name}"
     }
   }
-  depends_on = [google_project_service.eventarc_api]
+  depends_on = [
+    google_project_service.eventarc_api,
+    google_cloud_run_v2_service.document_handler
+  ]
 }
