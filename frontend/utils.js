@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const projectId = 'docai-accelerator';
 const databaseId = 'ai-alchemists-db';
 const bucketId = 'alchemist_ingestion_data_0d0ec9';
+const historyCollection = 'history';
 const storage = new Storage({ projectId });
 const pubsub = new PubSub({ projectId });
 const bigquery = new BigQuery({ projectId });
@@ -95,6 +96,7 @@ const updateDb = async (message, uuid, model_output=false) => {
   }
   // message.timestamp = timestamp;
   await db.collection(uuid).add(postMessage);
+  await db.collection(historyCollection).add(postMessage);
   console.log('Message added to Firestore');
 };
   
@@ -127,7 +129,7 @@ const queryBigquery = async(username, password) => {
   if (password) {
     const hashedPassword = hashPassword(password);
     query = `
-        SELECT user_id, uuid
+        SELECT user_id, uuid, admin
         FROM \`docai-accelerator.ai_alchemists_user_table.users\`
         WHERE user_id = '${username}'
         AND password = '${hashedPassword}'

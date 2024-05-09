@@ -1,0 +1,169 @@
+/* Reset styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+}
+
+/* Container styles */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    color: #333;
+}
+
+/* Main styles */
+main {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart container styles */
+.chart-container {
+    height: 400px;
+    position: relative;
+}
+
+/* Legend container styles */
+.legend-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.legend-container h3 {
+    margin-bottom: 10px;
+}
+
+/* Timeframe styles */
+.timeframe {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+}
+
+/* Footer styles */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #777;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+/* Add style for legend colors */
+.legend-container .legend-color {
+    width: 20px;
+    height: 10px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+
+}
+
+/* Button and timeframe wrapper styles */
+.generate-statistics .button-wrapper,
+.generate-statistics .timeframe-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center horizontally */
+    flex-wrap: wrap; /* Allow items to wrap */
+    margin-bottom: 20px;
+}
+
+/* Button styles */
+.generate-statistics .button-wrapper button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.generate-statistics .button-wrapper button:hover {
+    background-color: #45a049;
+}
+
+/* Dropdown styles */
+.generate-statistics .timeframe-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    margin-right: 10px; /* Add margin for spacing */
+}
+
+.generate-statistics .timeframe-wrapper select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.generate-statistics .timeframe-wrapper select option {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Timeframe text styles */
+.generate-statistics .timeframe-wrapper .timeframe-text {
+    font-size: 16px;
+    color: #777;
+    margin-right: 10px; /* Add margin for spacing */
+}
+
+/* Adjust size of legend color rectangles for smaller screens */
+@media screen and (max-width: 768px) {
+    .legend-container .legend-color {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Remove the text from legend */
+.legend-container li {
+    list-style-type: none;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center; /* Align items vertically */
+}
+
+/* Hide the legend on smaller screens */
+@media screen and (max-width: 768px) {
+    .legend-container li {
+        display: none;
+    }
+}
