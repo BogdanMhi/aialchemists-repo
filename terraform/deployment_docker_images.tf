@@ -8,7 +8,6 @@ resource "docker_image" "document_handler_build" {
     #tag = ["version_1"]
   }
 
-  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
@@ -28,7 +27,6 @@ resource "docker_image" "image_handler_build" {
     #tag = ["version_1"]
   }
 
-  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
@@ -48,7 +46,6 @@ resource "docker_image" "video_handler_build" {
     #tag = ["version_1"]
   }
 
-  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
