@@ -28,8 +28,7 @@ locals {
 
   build_cmd = <<-EOT
         docker build -t ${local.art_reg}/${local.art_imag}:${local.image_tag} \
-            -f ${local.img_src_path}/Dockerfile .
-
+            -f ${local.img_src_path}/Dockerfile ${local.img_src_path}
         docker push ${local.art_reg}/${local.art_imag}:${local.image_tag}
     EOT
 
