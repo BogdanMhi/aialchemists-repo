@@ -20,6 +20,8 @@ resource "docker_registry_image" "document_handler_push" {
 
 ## image_handler
 resource "google_cloudbuild_trigger" "image_handler_build" {
+  project = var.project
+  name = "image-handler-build"
   location = var.region
 
   trigger_template {
@@ -28,10 +30,10 @@ resource "google_cloudbuild_trigger" "image_handler_build" {
   }
 
   substitutions = {
-    REPO_NAME = var.cloud_functions_repository_name
-    PROJECT_ID = var.project
-    REPO_REGION = var.region
-    IMAGE_NAME = var.image_handler_docker_image
+    _REPO_NAME = var.cloud_functions_repository_name
+    _PROJECT_ID = var.project
+    _REPO_REGION = var.region
+    _IMAGE_NAME = var.image_handler_docker_image
   }
 
   filename = "${var.image_handler_dockerfile_location}/cloudbuild.yaml"

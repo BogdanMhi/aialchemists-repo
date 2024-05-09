@@ -2,9 +2,9 @@ steps:
   - id: "build-docker-image"
     timeout: 3600s
     name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "${REPO_REGION}.pkg.dev/${PROJECT_ID}/${REPO_NAME}/&{IMAGE_NAME}:version_1", "../cloud_functions/image_handler/Dockerfile"]
+    args: ["build", "-t", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:version_1", "../cloud_functions/image_handler/Dockerfile"]
   - id: "push-docker-image"
     timeout: 3600s
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "${REPO_REGION}.pkg.dev/${PROJECT_ID}/${REPO_NAME}/&{IMAGE_NAME}:version_1"]
+    args: ["push", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:version_1"]
     waitFor: ["build-docker-image"]
