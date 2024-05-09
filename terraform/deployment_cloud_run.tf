@@ -63,7 +63,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
       resources {
         limits = {
           cpu    = "2"
-          memory = "4GiB"
+          memory = "4Gi"
         }
       }
     }
@@ -106,6 +106,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
 #    percent         = 100
 #    latest_revision = true
 #  }
+
 #  depends_on = [ 
 #    resource.docker_image.image_handler_build,
 #    resource.docker_registry_image.image_handler_push
@@ -144,7 +145,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
       resources {
         limits = {
           cpu    = "8"
-          memory = "32GiB"
+          memory = "32Gi"
         }
       }
     }
@@ -218,7 +219,7 @@ resource "google_cloud_run_v2_service" "video_handler" {
       resources {
         limits = {
           cpu    = "8"
-          memory = "32GiB"
+          memory = "32Gi"
         }
       }
 
@@ -231,7 +232,7 @@ resource "google_cloud_run_v2_service" "video_handler" {
   }
 
   depends_on = [ 
-    resource.docker_image.image_handler_build,
-    resource.docker_registry_image.image_handler_push
+    resource.docker_image.video_handler_build,
+    resource.docker_registry_image.video_handler_push
   ]
 }
