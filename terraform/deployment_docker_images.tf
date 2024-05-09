@@ -9,12 +9,13 @@ resource "docker_image" "document_handler_build" {
   }
 
   triggers = {always_run = timestamp()}
+  keep_locally = false
 }
 
 resource "docker_registry_image" "document_handler_push" {
   provider = docker.docker_images
   name = resource.docker_image.document_handler_build.name
-  keep_remotely = true
+  #keep_remotely = true
 }
 
 ## image_handler
@@ -28,12 +29,13 @@ resource "docker_image" "image_handler_build" {
   }
 
   triggers = {always_run = timestamp()}
+  keep_locally = false
 }
 
 resource "docker_registry_image" "image_handler_push" {
   provider = docker.docker_images
   name = resource.docker_image.image_handler_build.name
-  keep_remotely = true
+  #keep_remotely = true
 }
 
 ## video_handler
@@ -47,10 +49,11 @@ resource "docker_image" "video_handler_build" {
   }
 
   triggers = {always_run = timestamp()}
+  keep_locally = false
 }
 
 resource "docker_registry_image" "video_handler_push" {
   provider = docker.docker_images
   name = resource.docker_image.video_handler_build.name
-  keep_remotely = true
+  #keep_remotely = true
 }
