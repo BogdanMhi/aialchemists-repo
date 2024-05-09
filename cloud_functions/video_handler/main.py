@@ -5,12 +5,12 @@ from google.cloud import storage
 from google.cloud import bigquery
 from pytube import YouTube
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
+from utilities.settings import *
 
 app = Flask(__name__)
 storage_client = storage.Client(project=PROJECT_ID)
 bq_client = bigquery.Client(project=PROJECT_ID)
-bucket = storage_client.get_bucket("ingestion_data_placeholder")
+bucket = storage_client.get_bucket(INGESTION_DATA_BUCKET)
 
 def check_events_duplicates(event_id):
     table_id = f"{PROJECT_ID}.idempotency.video_handler_msg_ids"

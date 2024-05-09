@@ -37,6 +37,11 @@ resource "google_cloud_run_v2_service" "document_handler" {
         value = google_pubsub_topic.text_processor_function.name
       }
 
+      env {
+        name = "INGESTION_DATA_BUCKET"
+        value = google_storage_bucket.ingestion_bucket.name
+      }
+
       resources {
         startup_cpu_boost = true
         cpu_idle = true
@@ -103,6 +108,11 @@ resource "google_cloud_run_v2_service" "image_handler" {
         value = var.firestore_database_name
       }
 
+      env {
+        name = "INGESTION_DATA_BUCKET"
+        value = google_storage_bucket.ingestion_bucket.name
+      }
+
       resources {
         startup_cpu_boost = true
         cpu_idle = true
@@ -154,6 +164,11 @@ resource "google_cloud_run_v2_service" "video_handler" {
       env {
         name = "TEXT_PROCESSOR_TRIGGER"
         value = google_pubsub_topic.text_processor_function.name
+      }
+
+      env {
+        name = "INGESTION_DATA_BUCKET"
+        value = google_storage_bucket.ingestion_bucket.name
       }
 
       resources {
