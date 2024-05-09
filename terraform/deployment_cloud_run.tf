@@ -132,7 +132,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
     scaling {max_instance_count = 100}
     timeout = "900s"
     containers {
-      image = "${local.art_reg}/${local.art_imag}:${local.image_tag}"
+      image = resource.docker_image.document_handler_build.name
       #resource.docker_image.image_handler_build.name
 
       startup_probe {
