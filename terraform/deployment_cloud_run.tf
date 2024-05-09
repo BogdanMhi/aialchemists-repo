@@ -132,8 +132,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
     scaling {max_instance_count = 100}
     timeout = "900s"
     containers {
-      image = resource.docker_image.document_handler_build.name
-      #resource.docker_image.image_handler_build.name
+      image = resource.docker_image.image_handler_build.name
 
       startup_probe {
         initial_delay_seconds = 0
@@ -179,7 +178,11 @@ resource "google_cloud_run_v2_service" "image_handler" {
     percent = 100
   }
 
-  depends_on = [null_resource.build_push_image_handler]
+  depends_on = [ 
+    resource.docker_image.image_handler_build,
+    resource.docker_registry_image.image_handler_push
+    #null_resource.build_push_image_handler
+  ]
 }
 
 ## video_handler
