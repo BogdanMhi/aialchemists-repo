@@ -2,15 +2,15 @@
 resource "docker_image" "document_handler_build" {
   provider = docker.docker_images
   name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.document_handler_docker_image}:version_1"
-  timeouts {
-    create = "1h"
-    update = "1h"
-    delete = "20m"
-  }
   build {
     context = var.document_handler_dockerfile_location
     dockerfile = "Dockerfile"
     #tag = ["version_1"]
+    timeouts {
+      create = "1h"
+      update = "1h"
+      delete = "20m"
+    }
   }
 
   triggers = {always_run = timestamp()}
