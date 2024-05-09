@@ -1,7 +1,14 @@
 const multer = require('multer');
 const express = require('express');
 
-const { chatHistory, updateDb, publishMessage, uploadFileToBucket, queryBigquery, registerDbUser } = require('./utils');
+const { 
+  chatHistory, 
+  updateDb, 
+  publishMessage, 
+  uploadFileToBucket, 
+  queryBigquery, 
+  registerDbUser,
+  cleanUserConversation } = require('./utils');
 
 
 
@@ -42,6 +49,18 @@ function isAuthenticated(req, res, next) {
   }
 }
 
+app.get('/newconversation', isAuthenticated, async (req, res) => {
+  try {
+      cleanUserConversation(req.session.user.uuid);
+      console.log("I'm here!")
+      res.status(200).json({ success: true});
+  } catch (error) {
+      // Handle any errors that occur during the process of starting a new conversation
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -67,16 +86,21 @@ app.post('/login', async (req, res) => {
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    const result = await registerDbUser(username, password);
-    if (result.success) {
-      res.status(201).json({ message: 'User registered successfully', userId: result.uuid });
+    rows = await queryBigquery(username);
+    if (rows.length > 0 ) {
+      res.status(401).json({ success: false, message: 'User already registered' });
     } else {
-      res.status(500).json({ message: 'Registration failed', error: result.error });
-    }
+        const result = await registerDbUser(username, password);
+        if (result.success) {
+          res.status(201).json({ message: 'User registered successfully', userId: result.uuid });
+        } else {
+          res.status(500).json({ message: 'Registration failed', error: result.error });
+        }
+      }
   } catch (error) {
     console.error('Error in registration process:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
+    }
 });
 
 // Serve frontend

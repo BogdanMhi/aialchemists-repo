@@ -18,6 +18,21 @@ function hashPassword(password) {
   return crypto.createHash('md5').update(password).digest('hex');
 }
 
+const cleanUserConversation = async (collectionName) => {
+  const collectionRef = db.collection(collectionName);
+  const querySnapshot = await collectionRef.get();
+
+  // Delete all documents in the collection
+  const batch = db.batch();
+  querySnapshot.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  // Commit the batch operation
+  await batch.commit();
+  console.log(`All documents removed from collection ${collectionName}`);
+};
+
+
 const createDbCollection = async (collectionName) => {
   try {
     await db.collection(collectionName).doc().set({});
@@ -53,14 +68,18 @@ const chatHistory = async (uuid) => {
     const messages = [];
     const querySnapshot = await messagesRef.get();
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const timestamp = new Date(data.timestamp);
-      const hoursMinutes = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const message = { statement: data.statement, timestamp: hoursMinutes };
-      messages.push(message);
+        const data = doc.data();
+        const timestamp = new Date(data.timestamp);
+        const hoursMinutes = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Check if 'output' key exists, use it if available, otherwise fallback to 'statement'
+        const messageContent = data.output ? data.output : data.statement;
+
+        const message = { statement: messageContent, timestamp: hoursMinutes };
+        messages.push(message);
     });
     return messages;
-  };
+};
   
 const updateDb = async (message, uuid, model_output=false) => {
   const timestamp = new Date().toLocaleString('en-US', {
@@ -103,21 +122,28 @@ const uploadFileToBucket = async (file, bucketName, destinationBlobName) => {
 };
 
 const queryBigquery = async(username, password) => {
-  const hashedPassword = hashPassword(password);
-  console.log(username);
-  console.log(password);
-  const query = `
-      SELECT user_id, uuid
-      FROM \`docai-accelerator.ai_alchemists_user_table.users\`
-      WHERE user_id = '${username}'
-      AND password = '${hashedPassword}'
-      LIMIT 1
-  `;
+  let query;
+  if (password) {
+    const hashedPassword = hashPassword(password);
+    query = `
+        SELECT user_id, uuid
+        FROM \`docai-accelerator.ai_alchemists_user_table.users\`
+        WHERE user_id = '${username}'
+        AND password = '${hashedPassword}'
+        LIMIT 1
+    `;
+  } else {
+    query = `
+        SELECT user_id, uuid
+        FROM \`docai-accelerator.ai_alchemists_user_table.users\`
+        WHERE user_id = '${username}'
+        LIMIT 1
+    `;
+  }
+
   console.log(query);
-  // Parameters for the query
   // Run the query
-  const [rows] = await bigquery.query(query, {location: "europe-west3"});
-  // console.log(rows);
+  const [rows] = await bigquery.query(query, { location: "europe-west3" });
   return rows;
 };
 
@@ -128,4 +154,5 @@ module.exports = {
   uploadFileToBucket,
   queryBigquery,
   registerDbUser,
+  cleanUserConversation,
 };

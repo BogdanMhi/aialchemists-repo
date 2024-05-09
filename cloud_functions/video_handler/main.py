@@ -2,14 +2,27 @@ import whisper
 import json, base64
 from flask import Flask, request
 from google.cloud import storage
+from google.cloud import bigquery
 from pytube import YouTube
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 
 app = Flask(__name__)
 storage_client = storage.Client(project=PROJECT_ID)
+bq_client = bigquery.Client(project=PROJECT_ID)
 bucket = storage_client.get_bucket("ingestion_data_placeholder")
 
+def check_events_duplicates(event_id):
+    table_id = f"{PROJECT_ID}.idempotency.video_handler_msg_ids"
+    query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
+    results = bq_client.query(query)
+    for row in results:
+        if row[0]>0:
+            return True
+        else:
+            bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
+            return False
+        
 def video_handler(pubsub_message):
     """
     A cloud function that extracts the audio into text from a video file
@@ -64,7 +77,9 @@ def index():
     pubsub_message = envelope["message"]
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
-        video_handler(message)
+        context = pubsub_message["message_id"]
+        if not check_events_duplicates(context):
+            video_handler(message)
 
     return ("", 200)
 

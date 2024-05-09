@@ -114,10 +114,15 @@ def text_processor(cloud_event):
 
     prompt = PromptTemplate(input_variables=["question"], template=template)
     history = extract_all_documents_from_collection(PROJECT_ID, FIRESTORE_DATABASE_ID, uuid)
+    history_merged = []
+    for i in range(0, len(history), 2):
+        if i+1 < len(history):
+            new_dict = {**history[i],**history[i+1]}
+            history_merged.append(new_dict)
     agent = create_tool_calling_agent(llm, tools, prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-    result = agent_executor.invoke({"question": statement, "input": attachement_output, "history": history})
+    
+    result = agent_executor.invoke({"question": statement, "input": attachement_output, "history": history_merged})
     output_model = result['output']
 
     try:

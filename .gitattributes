@@ -1,3 +1,3 @@
-cloud_functions/image_handler/tesseract/*.a filter=lfs diff=lfs merge=lfs -text
-cloud_functions/image_handler/tesseract/.libs/libtesseract.a filter=lfs diff=lfs merge=lfs -text
 cloud_functions/video_handler/model/whisper/small.pt filter=lfs diff=lfs merge=lfs -text
+cloud_functions/image_handler/model_available/models--vikhyatk--moondream2/blobs/95f9c7ac62666e56e45a66d4c07a0d110be1c5cfbe4eef1ae86857ef2787ce19 filter=lfs diff=lfs merge=lfs -text
+cloud_functions/image_handler/model_available/models--vikhyatk--moondream2/snapshots/9ba2958f5a886de83fa18a235d651295a05b4d13/model.safetensors filter=lfs diff=lfs merge=lfs -text
