@@ -13,6 +13,17 @@ bq_client = bigquery.Client(project=PROJECT_ID)
 bucket = storage_client.get_bucket(INGESTION_DATA_BUCKET)
 
 def check_events_duplicates(event_id):
+    """
+    Checks if an event ID already exists in the BigQuery table meaning it was already processed.
+    If the event has been processed, the function returns True.
+    If the event has not been processed, the function inserts the new event ID into the idempotency table and returns False.
+
+    Args:
+        event_id (str): The event ID to check.
+
+    Returns:
+        bool: True if the event ID exists, False otherwise.
+    """
     table_id = f"{PROJECT_ID}.idempotency.video_handler_msg_ids"
     query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
     results = bq_client.query(query)
@@ -25,16 +36,18 @@ def check_events_duplicates(event_id):
         
 def video_handler(pubsub_message):
     """
-    A cloud function that extracts the audio into text from a video file
+    A cloud function that extracts audio into text from a video file or a YouTube link.
 
     Args:
         statement (str): The question asked by the user in the UI
         url_links (str): The link to the youtube item to be processed (if any)
         file_path (str): Name of the audio/video file uploaded in the UI and needs to be processed (if any)
         uuid      (str): Unique identifier of the user
+    
     Returns:
-        transcript (str): Content of the video/audio object or youtube link
+        transcript (str): JSON-formatted string containing the statement, attachement_output (content of the video/audio file or YouTube link) and uuid.
     """
+
     message_data = json.loads(pubsub_message)
     file_path = message_data.get("file_path", "")
 

@@ -17,7 +17,7 @@ video_file_extensions = [
     "wav", 
     "mp3", 
     "mp4", 
-    "mpeg",  # corrected typo
+    "mpeg",
     "mpga", 
     "m4a", 
     "webm"
@@ -50,6 +50,15 @@ storage_client = storage.Client()
 placeholder_bucket = storage_client.get_bucket(INGESTION_DATA_BUCKET)
 
 def detect_file_type(filename):
+    """
+    Determine the type of file based on its extension.
+
+    Args:
+        filename (str): The name of the file.
+
+    Returns:
+        str: The trigger for handling the file type.
+    """
     file_extension = filename.split(".")[-1].lower()
     if file_extension in image_file_extensions:
         return IMAGE_HANDLER_TRIGGER
@@ -61,6 +70,15 @@ def detect_file_type(filename):
         return "unknown"
 
 def detect_text_type(text):
+    """
+    Detect the type of text content.
+
+    Args:
+        text (str): The text content to analyze.
+
+    Returns:
+        tuple: A tuple containing the trigger for handling the text type and any detected URLs.
+    """
     video_link_pattern = re.compile(r"https?:\/\/(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)\S+")
     webpage_link_pattern = re.compile(r"https?:\/\/[^\s]+")
     plain_text_pattern = re.compile(r"^[\w\s\.,!?()\"'-]+$")
@@ -83,6 +101,16 @@ def detect_text_type(text):
         return (TEXT_PROCESSOR_TRIGGER, url_links)
 
 def format_classifier(event, context):
+    """
+    Format and classify Pub/Sub messages.
+
+    Args:
+        event (dict): The Pub/Sub event data.
+        context (google.cloud.functions.Context): Metadata for the event.
+
+    Returns:
+        bool: True if the message is successfully processed, False otherwise.
+    """
     try:
         pubsub_message = base64.b64decode(event["data"]).decode("utf-8")
         pubsub_message_json = json.loads(pubsub_message)

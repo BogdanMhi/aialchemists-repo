@@ -9,14 +9,19 @@ from utilities.settings import TEXT_PROCESSOR_TRIGGER
 def IoT_handler(cloud_event):
     """
     A cloud function that extracts the content of a web page
-
+    It is triggered by a pub/sub event and extracts the content of a web page specified in the event data.
+    It retrieves the URL from the event data, makes a request to the web page, parses the HTML content, and
+    returns the extracted text.
+    
     Args:
         statement (str): The question asked by the user in the UI
         url_links (str): The link to the web item to be processed
         uuid      (str): Unique identifier of the user
+    
     Returns:
-        transcript (str): Content of the web page
+        transcript (str): JSON-formatted string containing the statement, attachement_output (web page content) and uuid.
     """
+
     pubsub_message = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
     message_data = json.loads(pubsub_message)
     item_link = message_data["url_links"][0]

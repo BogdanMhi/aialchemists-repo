@@ -31,14 +31,15 @@ def extract_all_documents_from_collection(project_id, database_id, collection_na
     """
     Extracts all documents from a Firestore collection in a specific database.
  
-    Parameters:
-        project_id (str): The Google Cloud project ID.
-        database_id (str): The ID of the Firestore database (e.g., "(default)" for the default database).
+    Args:
+        project_id      (str): The Google Cloud project ID.
+        database_id     (str): The ID of the Firestore database.
         collection_name (str): The name of the Firestore collection from which documents need to be extracted.
  
     Returns:
-        list: A list containing all the documents extracted from the collection.
+        documents (list): A list containing all the documents extracted as dictionaries from the collection.
     """
+
     firestore_client = firestore.Client(project=project_id, database=database_id)
     collection_ref = firestore_client.collection(collection_name)
     query = collection_ref.order_by('timestamp')
@@ -47,17 +48,30 @@ def extract_all_documents_from_collection(project_id, database_id, collection_na
     return documents
 
 def remove_urls(text):
+    """
+    Function that removes URLs from a given text.
+
+    Args:
+        text (str): The text from which URLs need to be removed.
+
+    Returns:
+        url_pattern (str): The text with URLs removed.
+    """
+
     url_pattern = re.compile(r'(https?://\S+|www\.\S+)')
+
     return url_pattern.sub('', text)
 
 @functions_framework.cloud_event
 def text_processor(cloud_event):
     """
-    A cloud function that calls a LLM agent and processes the question addressed by the user alongside the files uploaded and/or links provided by the user in the UI (if any)
+    A cloud function that calls a LLM agent and processes the user's question along with any files uploaded or links provided.
+    
     Args:
         statement          (str): The question asked by the user in the UI
-        attachement_output (str): Output of the file uploaded in the UI (if any)
+        attachement_output (str): Output of the file uploaded in the UI or of the link provided (if any)
         uuid               (str): Unique identifier of the user
+    
     Returns:
         output_model (str): The answer of the LLM agent to the question addressed by the user in the UI
     """
@@ -65,9 +79,9 @@ def text_processor(cloud_event):
     pubsub_message = json.loads(pubsub_message)
     statement = remove_urls(pubsub_message['statement'])
     uuid = pubsub_message['uuid']
-    # to be used in attachement_output
     attachement_output = pubsub_message.get('attachement_output', '')
     print(pubsub_message)
+    
     # Query the BigQuery table to check if the uuid exists
     client = bigquery.Client()
     try:
