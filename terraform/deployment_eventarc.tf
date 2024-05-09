@@ -26,5 +26,10 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
     }
   }
 
+  transport {
+    pubsub {
+      topic = "projects/${var.project}/topics/${google_pubsub_topic.document_handler_function.name}"
+    }
+  }
   depends_on = [google_project_service.eventarc_api]
 }
