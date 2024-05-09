@@ -39,6 +39,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
 
   template {
     scaling {max_instance_count = 100}
+    timeout = 900
     containers {
       image = resource.docker_image.document_handler_build.name
 
@@ -61,6 +62,8 @@ resource "google_cloud_run_v2_service" "document_handler" {
       }
 
       resources {
+        startup_cpu_boost = true
+        cpu_idle = true
         limits = {
           cpu    = "2"
           memory = "4Gi"
@@ -121,6 +124,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
 
   template {
     scaling {max_instance_count = 100}
+    timeout = 900
     containers {
       image = resource.docker_image.image_handler_build.name
 
@@ -143,6 +147,8 @@ resource "google_cloud_run_v2_service" "image_handler" {
       }
 
       resources {
+        startup_cpu_boost = true
+        cpu_idle = true
         limits = {
           cpu    = "8"
           memory = "32Gi"
@@ -195,6 +201,7 @@ resource "google_cloud_run_v2_service" "video_handler" {
 
   template {
     scaling {max_instance_count = 100}
+    timeout = 900
     containers {
       image = resource.docker_image.video_handler_build.name
 
@@ -217,12 +224,13 @@ resource "google_cloud_run_v2_service" "video_handler" {
       }
 
       resources {
+        startup_cpu_boost = true
+        cpu_idle = true
         limits = {
           cpu    = "8"
           memory = "32Gi"
         }
       }
-
     }
   }
 
