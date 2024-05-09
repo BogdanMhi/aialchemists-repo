@@ -1,4 +1,11 @@
-# Pub/Sub Topics
+# Pub/Sub
+# Enable Pub/Sub API
+resource "google_project_service" "pubsub_api" {
+  service = "pubsub.googleapis.com"
+  project = var.project
+  disable_on_destroy = false
+}
+
 ## document_handler
 resource "google_pubsub_topic" "document_handler_function" {
     name = var.document_handler_topic_name

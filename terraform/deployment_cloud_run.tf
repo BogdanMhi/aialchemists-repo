@@ -1,8 +1,8 @@
 ## Cloud Run
-## Activate Cloud Run API
-resource "google_project_service" "cloud_run" {
-  service  = "run.googleapis.com"
-  project  = var.project
+## Enable Cloud Run API
+resource "google_project_service" "cloud_run_api" {
+  service = "run.googleapis.com"
+  project = var.project
   disable_on_destroy = false
 }
 
@@ -39,7 +39,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
 
   template {
     scaling {max_instance_count = 100}
-    timeout = 900
+    timeout = "900s"
     containers {
       image = resource.docker_image.document_handler_build.name
 
@@ -124,7 +124,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
 
   template {
     scaling {max_instance_count = 100}
-    timeout = 900
+    timeout = "900s"
     containers {
       image = resource.docker_image.image_handler_build.name
 
@@ -201,7 +201,7 @@ resource "google_cloud_run_v2_service" "video_handler" {
 
   template {
     scaling {max_instance_count = 100}
-    timeout = 900
+    timeout = "900s"
     containers {
       image = resource.docker_image.video_handler_build.name
 
