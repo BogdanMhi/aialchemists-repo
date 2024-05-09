@@ -3,6 +3,7 @@ import base64
 import tika
 from flask import Flask, request
 from google.cloud import storage
+from google.cloud import bigquery
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 from tika import parser
