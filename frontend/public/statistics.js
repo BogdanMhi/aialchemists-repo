@@ -126,8 +126,9 @@ generateBtn.addEventListener('click', async () => {
 // Event listener for WebSocket messages
 socket.on('stats', function(message) {
     // Update the UI with the received message
+    console.log(typeof message);
     console.log(message);
-    createChart(message);
+    createChart(JSON.parse(message));
     updateSelectedTimeframe(timeframeSelect.value);
 
 });
