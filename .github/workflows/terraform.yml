@@ -38,7 +38,18 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-    
+
+    - id: "build-docker-image"
+      timeout: 3600s
+      name: "gcr.io/cloud-builders/docker"
+      args: ["build", "-t", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}", "../cloud_functions/image_handler/Dockerfile"]
+
+    - id: "push-docker-image"
+      timeout: 3600s
+      name: "gcr.io/cloud-builders/docker"
+      args: ["push", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}"]
+      waitFor: ["build-docker-image"]
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
@@ -55,3 +66,10 @@ jobs:
     - name: Terraform Apply
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
+
+substitutions:
+  _REPO_NAME: "cloud-functions-source-deploy"
+  _PROJECT_ID: secrets.GCP_PROJECT_ID
+  _REPO_REGION: "europe-west3"
+  _IMAGE_NAME: "image-handler"
+  _IMAGE_TAG: "version_1"
