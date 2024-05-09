@@ -15,6 +15,17 @@ client_storage = storage.Client()
 bq_client = bigquery.Client(project=PROJECT_ID)
 
 def check_events_duplicates(event_id):
+    """
+    Checks if an event ID already exists in the BigQuery table meaning it was already processed.
+    If the event has been processed, the function returns True.
+    If the event has not been processed, the function inserts the new event ID into the idempotency table and returns False.
+
+    Args:
+        event_id (str): The event ID to check.
+
+    Returns:
+        bool: True if the event ID exists, False otherwise.
+    """
     table_id = f"{PROJECT_ID}.idempotency.document_handler_msg_ids"
     query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
     results = bq_client.query(query)
@@ -27,14 +38,16 @@ def check_events_duplicates(event_id):
         
 def extract_text_from_doc(file_path):
     """
-      Function to extract text from any file. 
+      Function to extract text from any document. 
       Available extensions are: txt, pdf, doc/x, xls/x, csv, ppt/x
 
       Args:
-          file_path (str): The path to the doc file to be checked.
+          file_path (str): The path to the document to be processed.
+      
       Returns:
-          text (str): extracted text from document provided
+          text (str): Extracted text from the document.
     """
+    
     parsed_document = parser.from_file(file_path)
     text = parsed_document["content"]
 
@@ -42,16 +55,16 @@ def extract_text_from_doc(file_path):
 
 def document_handler(pubsub_message):
     """
-    A cloud function that extracts the content of a document
+      A cloud function that extracts content of a document.
 
-    Args:
-        cloud_event (str): The path to the doc file to be checked
-    Returns:
-        output_text (str): extracted text from the provided document
+      Args:
+        statement (str): The question asked by the user in the UI
+        file_path (str): Name of the document that lays on an external location for which was provided a link or that was uploaded in the UI
+        uuid      (str): Unique identifier of the user
+      
+      Returns:
+        output_message (str): JSON-formatted string containing the statement, attachement_output (content of the document) and uuid.
     """
-    
-    # if link then parse
-    # if file path then use bucket location to parse
 
     pubsub_message_json = json.loads(pubsub_message)
     file_name = pubsub_message_json["file_path"]
