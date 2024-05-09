@@ -132,7 +132,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
     scaling {max_instance_count = 100}
     timeout = "900s"
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:version_1"
+      image = resource.docker_image.image_handler_build.name
 
       startup_probe {
         initial_delay_seconds = 0
@@ -179,10 +179,8 @@ resource "google_cloud_run_v2_service" "image_handler" {
   }
 
   depends_on = [ 
-    google_cloudbuild_trigger.image_handler_build
-    #resource.docker_image.image_handler_build,
-    #resource.docker_registry_image.image_handler_push
-    #null_resource.build_push_image_handler
+    resource.docker_image.image_handler_build,
+    resource.docker_registry_image.image_handler_push
   ]
 }
 

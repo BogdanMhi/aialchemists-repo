@@ -53,7 +53,7 @@ resource "docker_image" "video_handler_build" {
 
   triggers = {always_run = timestamp()}
   keep_locally = false
-  depends_on = [ docker_registry_image.image_handler_build ]
+  depends_on = [ docker_registry_image.image_handler_push ]
 }
 
 resource "docker_registry_image" "video_handler_push" {
