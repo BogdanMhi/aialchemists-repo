@@ -7,6 +7,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request
 from google.cloud import storage
 from google.cloud import bigquery
+from google.cloud import firestore
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 
@@ -33,6 +34,16 @@ def check_events_duplicates(event_id):
             bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
             return False
 
+def check_firestore_state(uuid):
+    firestore_client = firestore.Client(project=PROJECT_ID, database='docai-accelerator')
+    collection_ref = firestore_client.collection(uuid)
+    query = collection_ref.order_by('timestamp')
+    documents = [doc.to_dict() for doc in query.stream()]
+    latest_doc = documents[-1]
+    for key, value in latest_doc.items():
+        if key not in ("timestamp"):
+            return key
+        
 def extract_content_from_image(image_path):
     """
     Docstrings
@@ -85,7 +96,7 @@ def index():
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
         context = pubsub_message["message_id"]
-        if not check_events_duplicates(context):
+        if not check_events_duplicates(context) and check_firestore_state(json.loads(message)['uuid']) == 'statement':
             image_handler(message)
 
     return ("", 200)
