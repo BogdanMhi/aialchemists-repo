@@ -1,1 +1,0 @@
-src/lstm/libtesseract_lstm_la-tfnetwork.lo: ../../src/lstm/tfnetwork.cpp

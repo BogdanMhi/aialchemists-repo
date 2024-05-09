@@ -1,6 +1,7 @@
 openai-whisper
 google-cloud-storage
 google-cloud-pubsub
+google-cloud-bigquery
 pytube
 functions-framework==3.*
 Flask==3.0.0

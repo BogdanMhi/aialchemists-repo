@@ -1,5 +1,6 @@
 google-cloud-storage
 google-cloud-pubsub
+google-cloud-bigquery
 functions-framework==3.*
 tika
 Flask==3.0.0

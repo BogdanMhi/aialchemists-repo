@@ -2,20 +2,49 @@ import os
 import json
 import base64
 import json
-import cv2
-import pytesseract
+from PIL import Image
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request
 from google.cloud import storage
+from google.cloud import bigquery
+from google.cloud import firestore
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
 
 
 app = Flask(__name__)
 client_storage = storage.Client()
-os.environ["TESSDATA_PREFIX"] = "./tesseract/tessdata"  # '/usr/local/share/tessdata'
+model_id = "vikhyatk/moondream2"
+revision = "2024-04-02"
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, trust_remote_code=True, revision=revision
+)
+tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 
+bq_client = bigquery.Client(project=PROJECT_ID)
 
-def extract_text_from_image(image_path):
+def check_events_duplicates(event_id):
+    table_id = f"{PROJECT_ID}.idempotency.image_handler_msg_ids"
+    query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
+    results = bq_client.query(query)
+    for row in results:
+        if row[0]>0:
+            return True
+        else:
+            bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
+            return False
+
+def check_firestore_state(uuid):
+    firestore_client = firestore.Client(project=PROJECT_ID, database='ai-alchemists-db')
+    collection_ref = firestore_client.collection(uuid)
+    query = collection_ref.order_by('timestamp')
+    documents = [doc.to_dict() for doc in query.stream()]
+    latest_doc = documents[-1]
+    for key, value in latest_doc.items():
+        if key not in ("timestamp"):
+            return key
+        
+def extract_content_from_image(image_path):
     """
     Docstrings
 
@@ -24,30 +53,11 @@ def extract_text_from_image(image_path):
     Returns:
 
     """
-    # Configurables
-    oem = 3
-    psm = 1
-    scale_percent = 40
-
-    image = cv2.imread(image_path)
-
-    # Convert the image to grayscale.
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Resize the image based on the scale percent
-    width = int(gray.shape[1] * scale_percent / 100)
-    height = int(gray.shape[0] * scale_percent / 100)
-    resized = cv2.resize(gray, (width, height), interpolation=cv2.INTER_AREA)
-
-    # Apply thresholding to binarize the image.
-    _, thresholded = cv2.threshold(resized, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-    custom_config = f"--oem {oem} --psm {psm}"  # Set PSM and OEM
-    # Use pytesseract to extract text from the image
-    text = pytesseract.image_to_string(thresholded, config=custom_config)
-
+    image = Image.open(image_path)
+    enc_image = model.encode_image(image)
+    image_context = model.answer_question(enc_image, "Describe this image.", tokenizer)
     # Check if the text is empty or contains only whitespace
-    return text
+    return image_context
 
 def image_handler(pubsub_message):
     pubsub_message_json = json.loads(pubsub_message)
@@ -57,7 +67,7 @@ def image_handler(pubsub_message):
     image_blob = image_bucket.get_blob(file_path_blob)
     file_path = f"/tmp/{file_path_blob.split('/')[-1]}"
     image_blob.download_to_filename(file_path)
-    output_text = extract_text_from_image(file_path)
+    output_text = extract_content_from_image(file_path)
     cleaned_output_text = " ".join(output_text.split())
 
     print(cleaned_output_text)
@@ -85,7 +95,9 @@ def index():
     pubsub_message = envelope["message"]
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
-        image_handler(message)
+        context = pubsub_message["message_id"]
+        if not check_events_duplicates(context) and check_firestore_state(json.loads(message)['uuid']) == 'statement':
+            image_handler(message)
 
     return ("", 200)
 
