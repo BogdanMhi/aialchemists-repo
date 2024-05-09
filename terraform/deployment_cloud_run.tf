@@ -179,8 +179,9 @@ resource "google_cloud_run_v2_service" "image_handler" {
   }
 
   depends_on = [ 
-    resource.docker_image.image_handler_build,
-    resource.docker_registry_image.image_handler_push
+    google_cloudbuild_trigger.image_handler_build
+    #resource.docker_image.image_handler_build,
+    #resource.docker_registry_image.image_handler_push
     #null_resource.build_push_image_handler
   ]
 }
