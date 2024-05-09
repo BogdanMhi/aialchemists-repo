@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <link rel="stylesheet" href="statistics.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Statistics</h1>
+        </header>
+        <main>
+            <% if (admin) { %>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="legend-container">
+                    <h3>Legend</h3>
+                    <ul id="legend"></ul>
+                </div>
+                <div class="generate-statistics">
+                    <div class="timeframe-wrapper">
+                        <p class="timeframe-text">Please select the period you want to analyze:</p>
+                        <select id="timeframeSelect">
+                            <!-- Options will be dynamically added here -->
+                        </select>
+                    </div>
+                    <div class="button-wrapper">
+                        <button id="generateBtn">Expose Statistics</button>
+                    </div>
+                </div>
+            <% } %>
+        </main>
+        <footer>
+            <p>&copy; 2024 AI Alchemists</p>
+        </footer>
+    </div>
+    <!-- [START cloudrun_websockets_client] -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- [END cloudrun_websockets_client] -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chroma-js@2.1.1/chroma.min.js"></script>
+    <script src="statistics.js"></script>
+</body>
+</html>

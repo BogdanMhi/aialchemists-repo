@@ -25,6 +25,7 @@ const fileInput = document.getElementById('fileInput');
 const fileSelectButton = document.getElementById('fileSelectButton');
 const messageList = document.getElementById('messageList');
 const alertMessage = document.getElementById('alertMessage');
+const exposeStatisticsButton = document.getElementById('exposeStatisticsButton');
 
 
 // Function to hide file input and select file button
@@ -204,6 +205,22 @@ newConversationButton.addEventListener('click', async () => {
             messageList.removeChild(messageList.firstChild);
         }
         const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+exposeStatisticsButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/statistics', {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            console.error('Request failed with status:', response.status);
+            return; // Stop further execution
+        }
+        window.location.href = '/statistics';
         console.log(data);
     } catch (error) {
         console.error('Error:', error);

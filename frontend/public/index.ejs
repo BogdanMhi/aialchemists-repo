@@ -23,7 +23,7 @@
             <input type="text" id="textInput" name="textInput" class="text-input" placeholder="Please ask your question here"><br><br>
 
             <!-- Drag and drop box -->
-            <div id="drag-drop-box" class="drag-drop-box">
+            <div id="drag-drop-box" class ="drag-drop-box">
                 <div class="text" id="fileInfoText">Drag and Drop Files Here</div>
                 <button type="button" id="removeFileButton" style="display: none;">Remove File</button> <!-- Button to remove file -->
                 <input type="file" id="fileInput" name="fileInput" multiple style="display: none;"><br><br> <!-- File input field -->
@@ -33,6 +33,9 @@
             <form id="uploadForm" enctype="multipart/form-data">
                 <input type="submit" value="Submit" class="submit-button"> <!-- Submit button -->
             </form>
+            <% if ( admin ) { %>
+                <button id="exposeStatisticsButton" class="start-conversation-button">Expose Statistics</button>
+            <% } %>
             <button id="newConversationButton" class="start-conversation-button">Start a New Conversation</button>
         </div>
 
