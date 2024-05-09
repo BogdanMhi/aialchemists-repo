@@ -8,7 +8,10 @@ resource "docker_image" "document_handler_build" {
     tag = ["version_2"]
   }
 
-  triggers = {always_run = timestamp()}
+  #triggers = {always_run = timestamp()}
+  triggers = {
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, var.document_handler_dockerfile_location) : filesha1(f)]))
+  }
   keep_locally = false
   depends_on = [google_artifact_registry_repository.cf_repository]
 }
@@ -30,7 +33,10 @@ resource "docker_image" "image_handler_build" {
     tag = ["version_1"]
   }
 
-  triggers = {always_run = timestamp()}
+  #triggers = {always_run = timestamp()}
+  triggers = {
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, var.image_handler_dockerfile_location) : filesha1(f)]))
+  }
   keep_locally = false
   depends_on = [ docker_registry_image.document_handler_push ]
 }
@@ -52,7 +58,10 @@ resource "docker_image" "video_handler_build" {
     tag = ["version_2"]
   }
 
-  triggers = {always_run = timestamp()}
+  #triggers = {always_run = timestamp()}
+  triggers = {
+    dir_sha1 = sha1(join("", [for f in fileset(path.module, var.video_handler_dockerfile_location) : filesha1(f)]))
+  }
   keep_locally = false
   depends_on = [ docker_registry_image.image_handler_push ]
 }
