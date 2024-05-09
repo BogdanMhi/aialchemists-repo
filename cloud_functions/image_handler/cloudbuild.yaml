@@ -1,19 +1,10 @@
 steps:
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - build
-      - '-t'
-      - >-
-        europe-west3-docker.pkg.dev/docai-accelerator/cloud-functions-source-deploy/image-handler:version_1
-      - '-f'
-      - ../cloud_functions/image_handler/Dockerfile
-      - .
-  - name: gcr.io/cloud-builders/docker
-    args:
-      - push
-      - >-
-        europe-west3-docker.pkg.dev/docai-accelerator/cloud-functions-source-deploy/image-handler:version_1
-timeout: 3600s
-images:
-  - >-
-    europe-west3-docker.pkg.dev/docai-accelerator/cloud-functions-source-deploy/image-handler:version_1
+  - id: "build-docker-image"
+    timeout: 3600s
+    name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "${REPO_REGION}.pkg.dev/${PROJECT_ID}/${REPO_NAME}/&{IMAGE_NAME}:version_1", "../cloud_functions/image_handler/Dockerfile"]
+  - id: "push-docker-image"
+    timeout: 3600s
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${REPO_REGION}.pkg.dev/${PROJECT_ID}/${REPO_NAME}/&{IMAGE_NAME}:version_1"]
+    waitFor: ["build-docker-image"]

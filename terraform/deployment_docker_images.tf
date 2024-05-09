@@ -21,6 +21,19 @@ resource "docker_registry_image" "document_handler_push" {
 ## image_handler
 resource "google_cloudbuild_trigger" "image_handler_build" {
   location = var.region
+
+  trigger_template {
+    branch_name = "main"
+    repo_name   = "aialchemists-repo"
+  }
+
+  substitutions = {
+    REPO_NAME = var.cloud_functions_repository_name
+    PROJECT_ID = var.project
+    REPO_REGION = var.region
+    IMAGE_NAME = var.image_handler_docker_image
+  }
+
   filename = "${var.image_handler_dockerfile_location}/cloudbuild.yaml"
 }
 
