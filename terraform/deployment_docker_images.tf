@@ -27,7 +27,7 @@ locals {
   img_src_sha256 = sha256(join("", [for f in fileset(".", "${local.img_src_path}/**") : file(f)]))
 
   build_cmd = <<-EOT
-        gcloud run deploy ${var.image_handler_docker_image} --region=${var.region} --source=${local.img_src_path} ${local.img_src_path} 
+        gcloud run deploy ${local.art_imag} --region=${var.region} --source=${local.img_src_path} . 
     EOT
 
 }
