@@ -7,30 +7,6 @@ resource "google_project_service" "cloud_run_api" {
 }
 
 ## document_handler
-#resource "google_cloud_run_service" "document_handler" {
-#  name     = var.cloud_run_document_handler_name
-#  location = var.region
-#  project  = var.project
-
-#  template {
-#    spec {
-#      containers {
-#        image = resource.docker_image.document_handler_build.name
-#      }
-#    }
-#  }
-
-#  traffic {
-#    percent         = 100
-#    latest_revision = true
-#  }
-
-#  depends_on = [ 
-#    resource.docker_image.document_handler_build,
-#    resource.docker_registry_image.document_handler_push
-#  ]
-#}
-
 resource "google_cloud_run_v2_service" "document_handler" {
   name     = var.cloud_run_document_handler_name
   location = var.region
@@ -39,7 +15,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
 
   template {
     scaling {max_instance_count = 100}
-    timeout = "900s"
+    timeout = "300s"
     containers {
       image = resource.docker_image.document_handler_build.name
 
@@ -90,30 +66,6 @@ resource "google_cloud_run_v2_service" "document_handler" {
 #  service  = google_cloudfunctions2_function.image_handler.service_config[0].service
 #  role     = "roles/run.invoker"
 #  member   = "allUsers"
-#}
-
-#resource "google_cloud_run_service" "image_handler" {
-#  name     = var.cloud_run_image_handler_name
-#  location = var.region
-#  project  = var.project
-
-#  template {
-#    spec {
-#      containers {
-#        image = resource.docker_image.image_handler_build.name
-#      }
-#    }
-#  }
-
-#  traffic {
-#    percent         = 100
-#    latest_revision = true
-#  }
-
-#  depends_on = [ 
-#    resource.docker_image.image_handler_build,
-#    resource.docker_registry_image.image_handler_push
-#  ]
 #}
 
 resource "google_cloud_run_v2_service" "image_handler" {
@@ -169,30 +121,6 @@ resource "google_cloud_run_v2_service" "image_handler" {
 }
 
 ## video_handler
-#resource "google_cloud_run_service" "video_handler" {
-#  name     = var.cloud_run_video_handler_name
-#  location = var.region
-#  project  = var.project
-
-#  template {
-#    spec {
-#      containers {
-#        image = resource.docker_image.video_handler_build.name
-#      }
-#    }
-#  }
-
-#  traffic {
-#    percent         = 100
-#    latest_revision = true
-#  }
-
-#  depends_on = [ 
-#    resource.docker_image.video_handler_build,
-#    resource.docker_registry_image.video_handler_push
-#  ]
-#}
-
 resource "google_cloud_run_v2_service" "video_handler" {
   name     = var.cloud_run_video_handler_name
   location = var.region
