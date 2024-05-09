@@ -51,7 +51,7 @@ resource "null_resource" "build_push_image_handler" {
 }
 
 output "trigged_by" {
-  value = null_resource.build_push_dkr_img.triggers
+  value = null_resource.build_push_image_handler.triggers
 }
 
 #resource "docker_image" "image_handler_build" {
