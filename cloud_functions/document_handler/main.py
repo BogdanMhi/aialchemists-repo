@@ -5,7 +5,7 @@ from flask import Flask, request
 from google.cloud import storage
 from google.cloud import bigquery
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, INGESTION_DATA_BUCKET
 from tika import parser
 
 tika.initVM()
@@ -59,7 +59,7 @@ def document_handler(pubsub_message):
     if ('http' or 'www') in file_name:
         output_text = extract_text_from_doc(file_name)
     else:
-        doc_bucket = client_storage.get_bucket("ingestion_data_placeholder")
+        doc_bucket = client_storage.get_bucket(INGESTION_DATA_BUCKET)
         doc_blob = doc_bucket.get_blob(file_name)
         file_path = f"/tmp/{file_name.split('/')[-1]}"
         doc_blob.download_to_filename(file_path)      
