@@ -25,7 +25,7 @@ resource "google_cloudbuild_trigger" "image_handler_build" {
   location = var.region
 
   trigger_template {
-    branch_name = "main"
+    branch_name = "integrate_cloud_run_with_terraform"
     repo_name   = "aialchemists-repo"
   }
 
@@ -34,6 +34,7 @@ resource "google_cloudbuild_trigger" "image_handler_build" {
     _PROJECT_ID = var.project
     _REPO_REGION = var.region
     _IMAGE_NAME = var.image_handler_docker_image
+    _IMAGE_TAG = "version_1"
   }
 
   filename = "${var.image_handler_dockerfile_location}/cloudbuild.yaml"
