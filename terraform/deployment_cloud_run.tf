@@ -132,7 +132,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
     scaling {max_instance_count = 100}
     timeout = "900s"
     containers {
-      image = resource.docker_image.image_handler_build.name
+      image = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:version_1"
 
       startup_probe {
         initial_delay_seconds = 0

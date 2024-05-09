@@ -50,11 +50,11 @@ resource "google_cloudbuild_trigger" "image_handler_build" {
 #  keep_locally = false
 #}
 
-resource "docker_registry_image" "image_handler_push" {
-  provider = docker.docker_images
-  name = resource.docker_image.image_handler_build.name
-  #keep_remotely = true
-}
+#resource "docker_registry_image" "image_handler_push" {
+#  provider = docker.docker_images
+#  name = resource.docker_image.image_handler_build.name
+#  #keep_remotely = true
+#}
 
 ## video_handler
 resource "docker_image" "video_handler_build" {
