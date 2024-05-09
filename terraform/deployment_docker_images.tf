@@ -1,11 +1,11 @@
 ## document_handler
 resource "docker_image" "document_handler_build" {
   provider = docker.docker_images
-  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.document_handler_docker_image}:version_3"
+  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.document_handler_docker_image}:version_4"
   build {
     context = var.document_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    tag = ["version_3"]
+    tag = ["version_4"]
   }
   triggers = {
     always_run = timestamp()
@@ -21,11 +21,11 @@ resource "docker_registry_image" "document_handler_push" {
 ## image_handler
 resource "docker_image" "image_handler_build" {
   provider = docker.docker_images
-  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:version_3"
+  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.image_handler_docker_image}:version_4"
   build {
     context = var.image_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    tag = ["version_3"]
+    tag = ["version_4"]
   }
   triggers = {
     always_run = timestamp()
@@ -41,11 +41,11 @@ resource "docker_registry_image" "image_handler_push" {
 ## video_handler
 resource "docker_image" "video_handler_build" {
   provider = docker.docker_images
-  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.video_handler_docker_image}:version_3"
+  name = "${var.region}-docker.pkg.dev/${var.project}/${var.cloud_functions_repository_name}/${var.video_handler_docker_image}:version_4"
   build {
     context = var.video_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    tag = ["version_3"]
+    tag = ["version_4"]
   }
   triggers = {
     always_run = timestamp()
