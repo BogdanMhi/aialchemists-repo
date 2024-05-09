@@ -35,7 +35,7 @@ def check_events_duplicates(event_id):
             return False
 
 def check_firestore_state(uuid):
-    firestore_client = firestore.Client(project=PROJECT_ID, database='docai-accelerator')
+    firestore_client = firestore.Client(project=PROJECT_ID, database='ai-alchemists-db')
     collection_ref = firestore_client.collection(uuid)
     query = collection_ref.order_by('timestamp')
     documents = [doc.to_dict() for doc in query.stream()]
