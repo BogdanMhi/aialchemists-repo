@@ -116,7 +116,10 @@ resource "google_cloud_run_v2_service" "document_handler" {
     percent = 100
   }
 
-  depends_on = [resource.docker_registry_image.document_handler_push]
+  depends_on = [
+    resource.docker_registry_image.document_handler_push,
+    google_cloud_run_v2_service_iam_policy.cr_noauth_policy
+  ]
 }
 
 ## image_handler
