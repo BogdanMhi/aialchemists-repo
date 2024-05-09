@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 ENV PYTHONUNBUFFERED True
 COPY requirements.txt ./
 RUN pip install -r requirements.txt

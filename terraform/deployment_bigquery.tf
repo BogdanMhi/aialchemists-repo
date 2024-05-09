@@ -26,6 +26,11 @@ resource "google_bigquery_table" "bigquery_table" {
     "name": "uuid",
     "type": "STRING",
     "mode": "REQUIRED"
+  },
+  {
+    "name": "admin",
+    "type": "STRING",
+    "mode": "NULLABLE"
   }
 ]
 EOF
