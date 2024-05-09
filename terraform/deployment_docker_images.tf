@@ -10,13 +10,14 @@ resource "docker_image" "document_handler_build" {
 
   triggers = {always_run = timestamp()}
   keep_locally = false
+  depends_on = [google_artifact_registry_repository.cf_repository]
 }
 
 resource "docker_registry_image" "document_handler_push" {
   provider = docker.docker_images
   name = resource.docker_image.document_handler_build.name
   #keep_remotely = true
-  depends_on = [ docker_image.document_handler_build ]
+  depends_on = [docker_image.document_handler_build]
 }
 
 ## image_handler

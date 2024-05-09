@@ -61,6 +61,7 @@ resource "google_cloud_run_v2_service_iam_policy" "cr_noauth_policy" {
   project     = var.project
   name        = google_cloud_run_v2_service.web_app.name
   policy_data = data.google_iam_policy.cloud_run_noauth.policy_data
+  depends_on = [resource.google_cloud_run_v2_service.web_app]
 }
 
 ## document_handler
@@ -115,10 +116,7 @@ resource "google_cloud_run_v2_service" "document_handler" {
     percent = 100
   }
 
-  depends_on = [ 
-    resource.docker_image.document_handler_build,
-    resource.docker_registry_image.document_handler_push
-  ]
+  depends_on = [resource.docker_registry_image.document_handler_push]
 }
 
 ## image_handler
@@ -178,10 +176,7 @@ resource "google_cloud_run_v2_service" "image_handler" {
     percent = 100
   }
 
-  depends_on = [ 
-    resource.docker_image.image_handler_build,
-    resource.docker_registry_image.image_handler_push
-  ]
+  depends_on = [resource.docker_registry_image.image_handler_push]
 }
 
 ## video_handler
@@ -236,8 +231,5 @@ resource "google_cloud_run_v2_service" "video_handler" {
     percent = 100
   }
 
-  depends_on = [ 
-    resource.docker_image.video_handler_build,
-    resource.docker_registry_image.video_handler_push
-  ]
+  depends_on = [resource.docker_registry_image.video_handler_push]
 }
