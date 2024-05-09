@@ -46,7 +46,7 @@ jobs:
 
     - name: "push-docker-image"
       timeout: 3600s
-      args: ["push", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}"]
+      run: ["push", "${_REPO_REGION}.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/&{_IMAGE_NAME}:&{_IMAGE_TAG}"]
       waitFor: ["build-docker-image"]
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
