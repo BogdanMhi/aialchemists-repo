@@ -5,9 +5,10 @@ resource "docker_image" "document_handler_build" {
   build {
     context = var.document_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    timeout = "1800s"
     #tag = ["version_1"]
   }
+
+  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
@@ -24,9 +25,10 @@ resource "docker_image" "image_handler_build" {
   build {
     context = var.image_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    timeout = "1800s"
     #tag = ["version_1"]
   }
+
+  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
@@ -43,9 +45,10 @@ resource "docker_image" "video_handler_build" {
   build {
     context = var.video_handler_dockerfile_location
     dockerfile = "Dockerfile"
-    timeout = "1800s"
     #tag = ["version_1"]
   }
+
+  timeout = "1800s"
   triggers = {always_run = timestamp()}
 }
 
