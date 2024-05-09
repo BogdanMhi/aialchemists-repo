@@ -5,7 +5,8 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const crypto = require('crypto');
 
 const projectId = 'docai-accelerator';
-const databaseId = 'ai-alchemists-db'
+const databaseId = 'ai-alchemists-db';
+const bucketId = 'alchemist_ingestion_data_0d0ec9';
 const storage = new Storage({ projectId });
 const pubsub = new PubSub({ projectId });
 const bigquery = new BigQuery({ projectId });
@@ -109,13 +110,13 @@ const publishMessage = async (topicId, message) => {
 };
   
 const fs = require('fs');
-const uploadFileToBucket = async (file, bucketName, destinationBlobName) => {
+const uploadFileToBucket = async (file, destinationBlobName) => {
   try {
-    const bucket = storage.bucket(bucketName);
+    const bucket = storage.bucket(bucketId);
     const blob = bucket.file(destinationBlobName);
     const fileContent = fs.readFileSync(file.path);
     await blob.save(fileContent);
-    console.log(`File ${file.originalname} uploaded to ${destinationBlobName} in ${bucketName} bucket.`);
+    console.log(`File ${file.originalname} uploaded to ${destinationBlobName} in ${bucketId} bucket.`);
   } catch (error) {
     console.error('Error uploading file:', error);
   }

@@ -9,7 +9,7 @@ from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud import firestore
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, FIRESTORE_DATABASE_ID
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, FIRESTORE_DATABASE_ID, INGESTION_DATA_BUCKET
 
 
 app = Flask(__name__)
@@ -63,7 +63,7 @@ def image_handler(pubsub_message):
     pubsub_message_json = json.loads(pubsub_message)
     file_path_blob = pubsub_message_json["file_path"]
 
-    image_bucket = client_storage.get_bucket("ingestion_data_placeholder")
+    image_bucket = client_storage.get_bucket(INGESTION_DATA_BUCKET)
     image_blob = image_bucket.get_blob(file_path_blob)
     file_path = f"/tmp/{file_path_blob.split('/')[-1]}"
     image_blob.download_to_filename(file_path)

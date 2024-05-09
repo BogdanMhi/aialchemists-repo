@@ -144,7 +144,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
     }
     else if (file) {
       console.log(`Processing file: ${file.originalname}`);
-      await uploadFileToBucket(file, "ingestion_data_placeholder", file.originalname);
+      await uploadFileToBucket(file, file.originalname);
       postMessage.file_path = file.originalname;
       if (textInput) {
           postMessage.statement = textInput; // Ensure postMessage.statement is set only if textInput is provided
