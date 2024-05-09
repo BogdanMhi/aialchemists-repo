@@ -9,7 +9,7 @@ from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud import firestore
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID
+from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, FIRESTORE_DATABASE_ID
 
 
 app = Flask(__name__)
@@ -35,7 +35,7 @@ def check_events_duplicates(event_id):
             return False
 
 def check_firestore_state(uuid):
-    firestore_client = firestore.Client(project=PROJECT_ID, database='ai-alchemists-db')
+    firestore_client = firestore.Client(project=PROJECT_ID, database=FIRESTORE_DATABASE_ID)
     collection_ref = firestore_client.collection(uuid)
     query = collection_ref.order_by('timestamp')
     documents = [doc.to_dict() for doc in query.stream()]

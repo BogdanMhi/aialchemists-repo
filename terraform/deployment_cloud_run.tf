@@ -98,6 +98,11 @@ resource "google_cloud_run_v2_service" "image_handler" {
         value = google_pubsub_topic.text_processor_function.name
       }
 
+      env {
+        name = "FIRESTORE_DATABASE_ID"
+        value = var.firestore_database_name
+      }
+
       resources {
         startup_cpu_boost = true
         cpu_idle = true
