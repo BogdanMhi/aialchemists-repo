@@ -1,8 +1,8 @@
 FROM python:3.10
 ENV PYTHONUNBUFFERED True
 COPY requirements.txt ./
-RUN apt-get update && apt-get install -y default-jdk
 RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install -y default-jdk
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./

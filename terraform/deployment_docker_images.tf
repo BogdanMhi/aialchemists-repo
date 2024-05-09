@@ -66,10 +66,10 @@ resource "docker_image" "video_handler_build" {
     dir_sha1 = sha1(join("", [for f in fileset(path.module, var.video_handler_dockerfile_location) : filesha1(f)]))
   }
   keep_locally = false
-  depends_on = [ 
-    docker_registry_image.image_handler_push,
-    google_cloud_run_v2_service.image_handler
-  ]
+  #depends_on = [ 
+    #docker_registry_image.image_handler_push,
+    #google_cloud_run_v2_service.image_handler
+  #]
 }
 
 resource "docker_registry_image" "video_handler_push" {
