@@ -26,6 +26,12 @@ resource "google_project_iam_member" "runinvoker" {
   member  = "serviceAccount:${google_service_account.eventarc_service_account.email}"
 }
 
+resource "google_project_iam_member" "bigquery_job_user" {
+  project = var.project
+  role    = "roles/bigquery.dataEditor"
+  member  = "serviceAccount:${google_service_account.eventarc_service_account.email}"
+}
+
 ## document_handler
 resource "google_eventarc_trigger" "trigger-document-handler" {
   name     = "trigger-document-handler"
@@ -43,7 +49,7 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
     }
   }
 
-  #service_account = google_service_account.eventarc_service_account.email
+  service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
@@ -73,7 +79,7 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
     }
   }
 
-  #service_account = google_service_account.eventarc_service_account.email
+  service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
@@ -103,7 +109,7 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
     }
   }
 
-  #service_account = google_service_account.eventarc_service_account.email
+  service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
