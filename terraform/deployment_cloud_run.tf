@@ -1,3 +1,4 @@
+/*
 ## Cloud Run
 ## Enable Cloud Run API
 resource "google_project_service" "cloud_run_api" {
@@ -236,3 +237,4 @@ resource "google_cloud_run_v2_service" "video_handler" {
 
   depends_on = [resource.docker_registry_image.video_handler_push]
 }
+*/

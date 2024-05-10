@@ -1,3 +1,4 @@
+/*
 # Enable Artifact Registry API
 resource "google_project_service" "enable_artifact_registry_api" {
   service = "artifactregistry.googleapis.com"
@@ -12,3 +13,4 @@ resource "google_artifact_registry_repository" "cf_repository" {
   format        = "DOCKER"
   description   = "Repository for cloud functions"
 }
+*/

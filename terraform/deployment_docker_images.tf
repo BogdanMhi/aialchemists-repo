@@ -1,3 +1,4 @@
+/*
 ## document_handler
 resource "docker_image" "document_handler_build" {
   provider = docker.docker_images
@@ -78,3 +79,4 @@ resource "docker_registry_image" "video_handler_push" {
   #keep_remotely = true
   depends_on = [ docker_image.video_handler_build ]
 }
+*/
