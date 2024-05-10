@@ -72,10 +72,9 @@ def check_admin_users(uuid):
     Returns:
         bool: True if the user is an admin, False otherwise."""
     
-    table_id = f"{BIGQUERY_DATABASE_ID}"
     query = (
         f"SELECT COUNT(user_id) "
-        f"FROM `{table_id}` "
+        f"FROM `{BIGQUERY_DATABASE_ID}` "
         f"WHERE uuid = '{uuid}' AND LOWER(admin) = 'true'"
     )
     query_job = bq_client.query(query)
