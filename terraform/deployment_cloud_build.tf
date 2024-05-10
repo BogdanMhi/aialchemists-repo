@@ -1,15 +1,10 @@
 module "gcloud" {
   source  = "terraform-google-modules/gcloud/google"
   version = "~> 3.4"
-  #skip_download = "true"
   platform = "linux"
   additional_components = ["kubectl", "beta"]
-
   create_cmd_entrypoint  = "gcloud"
   create_cmd_body        = "version"
-  #destroy_cmd_entrypoint = "gcloud"
-  #destroy_cmd_body       = "version"
-  #depends_on = [ google_project_service.enable_artifact_registry_api ]
 }
 
 # web-app
@@ -24,6 +19,7 @@ resource "null_resource" "deploy_web_app" {
   provisioner "local-exec" {
     command = "gcloud run deploy ${var.web_app_source_name} --region=${var.region} --source=${var.web_app_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=3600s --cpu=4 --memory=8Gi --allow-unauthenticated"
   }
+  depends_on = [google_artifact_registry_repository.cloud_run_repository]
 }
 
 # document_handler
