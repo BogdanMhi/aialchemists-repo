@@ -2,6 +2,7 @@ import os
 import base64
 import json
 import requests
+import pytz
 from google.cloud import firestore
 from datetime import datetime
 from google.cloud import bigquery
@@ -42,7 +43,8 @@ def classify_collection(user_input):
         list: List of classified documents based on user input."""
     
     documents = check_firestore_documents()
-    current_time = datetime.now().replace(microsecond=0)
+    tz = pytz.timezone('Europe/Bucharest')
+    current_time = datetime.now(tz).replace(microsecond=0).replace(tzinfo=None)
 
     today_collection = [doc for doc in documents if (current_time - datetime.strptime(doc['timestamp'], ("%m/%d/%Y, %H:%M:%S"))).days == 0]
     current_7days_collection = [doc for doc in documents if (current_time - datetime.strptime(doc['timestamp'], ("%m/%d/%Y, %H:%M:%S"))).days <= 7]
