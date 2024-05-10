@@ -55,7 +55,7 @@ resource "null_resource" "deploy_image_handler" {
 }
 
 # video_handler
-resource "null_resource" "video_image_handler" {
+resource "null_resource" "deploy_video_handler" {
   # Define triggers based on a frequently changing attribute of an existing Azure resource
   #triggers = {
   #  dir_sha1 = sha1(join("", [for f in fileset(path.module, var.video_handler_source_path) : filesha1(f)]))
