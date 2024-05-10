@@ -1,7 +1,7 @@
 ## Cloud Build
 # web-app FE
 variable web_app_source_path {default = "../frontend/"}
-variable web_app_source_name {default = "web-app-tf"}
+variable web_app_source_name {default = "web-app"}
 
 #document_handler
 variable document_handler_source_path {default = "../cloud_functions/document_handler/"}

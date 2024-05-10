@@ -43,7 +43,7 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
     }
   }
 
-  service_account = google_service_account.eventarc_service_account.email
+  #service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
@@ -73,7 +73,7 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
     }
   }
 
-  service_account = google_service_account.eventarc_service_account.email
+  #service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
@@ -103,7 +103,7 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
     }
   }
 
-  service_account = google_service_account.eventarc_service_account.email
+  #service_account = google_service_account.eventarc_service_account.email
 
   transport {
     pubsub {
