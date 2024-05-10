@@ -132,13 +132,16 @@ resource "google_cloudfunctions_function" "stats_generator" {
     update = "60m"
   }
 
-  region              = var.region
-  name                = var.stats_generator_function_name
-  entry_point         = var.stats_generator_entry_point
-  runtime             = var.stats_generator_python_version
-  timeout             = 540
-  max_instances       = 500
-  available_memory_mb = var.stats_generator_function_memory
+  region                        = var.region
+  name                          = var.stats_generator_function_name
+  entry_point                   = var.stats_generator_entry_point
+  runtime                       = var.stats_generator_python_version
+  ingress_settings              = var.ingress_selection
+  vpc_connector                 = var.vpc_access_connector
+  vpc_connector_egress_settings = var.vpc_egress
+  timeout                       = 540
+  max_instances                 = 500
+  available_memory_mb           = var.stats_generator_function_memory
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
@@ -151,6 +154,7 @@ resource "google_cloudfunctions_function" "stats_generator" {
   environment_variables = {
     PROJECT_ID = var.project
     FIRESTORE_DATABASE_ID = var.firestore_database_name
+    BIGQUERY_DATABASE_ID = "${var.project}.${var.bigquery_database_name}.${var.bigquery_database_table}"
     HISTORY_COLLECTION = "history"
     AZURE_OPENAI_API_KEY = var.text_processor_azure_api_key
     AZURE_OPENAI_ENDPOINT = var.text_processor_azure_endpoint

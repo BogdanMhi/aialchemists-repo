@@ -8,7 +8,7 @@ from google.cloud import bigquery
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
-from utilities.settings import PROJECT_ID, FIRESTORE_DATABASE_ID, AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, HISTORY_COLLECTION
+from utilities.settings import *
 
 bq_client = bigquery.Client(project=PROJECT_ID)
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -21,7 +21,7 @@ llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
 def check_firestore_documents():
     """Extracts documents from all Firestore collections."""
     firestore_client = firestore.Client(project=PROJECT_ID, database=FIRESTORE_DATABASE_ID)
-    collection_ref = firestore_client.collection('9fe23e7eca5356b74148fe4f62cd262c')
+    collection_ref = firestore_client.collection(HISTORY_COLLECTION)
     query = collection_ref.order_by('timestamp')
     documents = [doc.to_dict() for doc in query.stream()]
     return documents
@@ -50,10 +50,9 @@ def classify_collection(user_input):
 
 def check_admin_users(uuid):
     """Checks if the user is an admin."""
-    table_id = f"{PROJECT_ID}.ai_alchemists_user_table.users"
     query = (
         f"SELECT COUNT(user_id) "
-        f"FROM `{table_id}` "
+        f"FROM `{BIGQUERY_DATABASE_ID}` "
         f"WHERE uuid = '{uuid}' AND LOWER(admin) = 'true'"
     )
     query_job = bq_client.query(query)
