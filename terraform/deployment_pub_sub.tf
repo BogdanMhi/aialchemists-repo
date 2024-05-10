@@ -7,11 +7,11 @@ resource "google_project_service" "pubsub_api" {
 }
 
 ## Define Custom Role for Only Getting and Consuming Subscriptions
-resource "google_project_iam_custom_role" "pubsub_subscription_reader" {
-  role_id     = "pubsub.subscriptions.read"
-  title       = "Get and consume Pub/Sub Subscriptions"
-  permissions = ["pubsub.subscriptions.get", "pubsub.subscriptions.consume"]
-}
+#resource "google_project_iam_custom_role" "pubsub_subscription_reader" {
+#  role_id     = "pubsub.subscriptions.read"
+#  title       = "Get and consume Pub/Sub Subscriptions"
+#  permissions = ["pubsub.subscriptions.get", "pubsub.subscriptions.consume"]
+#}
 
 
 ## document_handler
@@ -35,8 +35,8 @@ resource "google_pubsub_subscription" "document_handler_sub" {
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
   subscription = google_pubsub_subscription.document_handler_sub.name
-  role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = [google_eventarc_trigger.trigger_document_handler.name]
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_document_handler.id]
 }
 
 ## format_classifier
@@ -66,8 +66,8 @@ resource "google_pubsub_subscription" "image_handler_sub" {
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
   subscription = google_pubsub_subscription.image_handler_sub.name
-  role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = [google_eventarc_trigger.trigger_image_handler.name]
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_image_handler.id]
 }
 
 ## iot_handler
@@ -109,6 +109,6 @@ resource "google_pubsub_subscription" "video_handler_sub" {
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
   subscription = google_pubsub_subscription.video_handler_sub.name
-  role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = [google_eventarc_trigger.trigger_video_handler.name]
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_video_handler.id]
 }
