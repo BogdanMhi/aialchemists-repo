@@ -35,7 +35,7 @@ resource "google_pubsub_subscription" "document_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_document_handler.name}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_document_handler.name}
   depends_on = [
     google_eventarc_trigger.trigger_document_handler,
     google_pubsub_topic.document_handler_function
@@ -78,7 +78,7 @@ resource "google_pubsub_subscription" "image_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_image_handler.name}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_image_handler.name}
   depends_on = [
     google_eventarc_trigger.trigger_image_handler,
     google_pubsub_topic.image_handler_function
@@ -133,7 +133,7 @@ resource "google_pubsub_subscription" "video_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_video_handler.name}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_video_handler.name}
   depends_on = [
     google_eventarc_trigger.trigger_video_handler,
     google_pubsub_topic.video_handler_function
