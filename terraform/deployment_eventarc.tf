@@ -38,7 +38,6 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
   ]
 }
 
-/*
 ## image_handler
 resource "google_eventarc_trigger" "trigger-image-handler" {
   name     = "trigger-image-handler"
@@ -49,7 +48,7 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
   }
   destination {
     cloud_run_service {
-      service = google_cloud_run_v2_service.image_handler.name
+      service = var.image_handler_source_name
       region  = var.region
     }
   }
@@ -61,10 +60,9 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
   }
   depends_on = [
     google_project_service.eventarc_api,
-    google_cloud_run_v2_service.image_handler
+    null_resource.deploy_image_handler
   ]
 }
-
 
 ## video_handler
 resource "google_eventarc_trigger" "trigger-video-handler" {
@@ -76,7 +74,7 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
   }
   destination {
     cloud_run_service {
-      service = google_cloud_run_v2_service.video_handler.name
+      service = var.video_handler_source_name
       region  = var.region
     }
   }
@@ -88,7 +86,6 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
   }
   depends_on = [
     google_project_service.eventarc_api,
-    google_cloud_run_v2_service.video_handler
+    null_resource.deploy_video_handler
   ]
 }
-*/
