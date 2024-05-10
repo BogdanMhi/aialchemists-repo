@@ -12,6 +12,7 @@ module "gcloud" {
   #depends_on = [ google_project_service.enable_artifact_registry_api ]
 }
 
+# web-app
 resource "null_resource" "deploy_web_app" {
   # Define triggers based on a frequently changing attribute of an existing Azure resource
   #triggers = {
@@ -22,5 +23,19 @@ resource "null_resource" "deploy_web_app" {
   # Define provisioner or other configuration as needed
   provisioner "local-exec" {
     command = "gcloud run deploy ${var.web_app_source_name} --region=${var.region} --source=${var.web_app_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=3600s --cpu=4 --memory=8Gi --allow-unauthenticated"
+  }
+}
+
+# document_handler
+resource "null_resource" "deploy_document_handler" {
+  # Define triggers based on a frequently changing attribute of an existing Azure resource
+  #triggers = {
+  #  dir_sha1 = sha1(join("", [for f in fileset(path.module, var.web_app_source_path) : filesha1(f)]))
+  #}
+  triggers = {always_run = timestamp()}
+
+  # Define provisioner or other configuration as needed
+  provisioner "local-exec" {
+    command = "gcloud run deploy ${var.document_handler_source_name} --region=${var.region} --source=${var.document_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=300s --cpu=2 --memory=4Gi --set-env-vars=[PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name}]"
   }
 }

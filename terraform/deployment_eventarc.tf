@@ -1,4 +1,3 @@
-/*
 # Eventarc
 # Enable Eventarc API
 resource "google_project_service" "eventarc_api" {
@@ -23,7 +22,7 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
   }
   destination {
     cloud_run_service {
-      service = google_cloud_run_v2_service.document_handler.name
+      service = var.document_handler_source_name
       region  = var.region
     }
   }
@@ -35,10 +34,11 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
   }
   depends_on = [
     google_project_service.eventarc_api,
-    google_cloud_run_v2_service.document_handler
+    null_resource.deploy_document_handler
   ]
 }
 
+/*
 ## image_handler
 resource "google_eventarc_trigger" "trigger-image-handler" {
   name     = "trigger-image-handler"
