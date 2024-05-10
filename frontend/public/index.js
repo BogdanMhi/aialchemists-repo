@@ -3,11 +3,9 @@
 //const socket = io('wss://hello-world-app-adwexujega-ey.a.run.app/socket.io/?EIO=4&transport=websocket', {transports: ['websocket', 'polling']});
 // Connect to the WebSocket server
 const socket = io('', {transports: ['websocket']});
-
 socket.on('connect_error', (error) => {
     console.error('Connection Error:', error);
 });
-
 
 const options = {
     timeZone: 'Europe/Bucharest',
@@ -24,6 +22,8 @@ const newConversationButton = document.getElementById('newConversationButton');
 const fileInput = document.getElementById('fileInput');
 const fileSelectButton = document.getElementById('fileSelectButton');
 const messageList = document.getElementById('messageList');
+const alertMessage = document.getElementById('alertMessage');
+const exposeStatisticsButton = document.getElementById('exposeStatisticsButton');
 
 
 // Function to hide file input and select file button
@@ -65,19 +65,8 @@ function toggleLoadingScreen() {
     }
 }
 
-// Event listener for WebSocket messages
-socket.on('notification', function(message) {
-    // Update the UI with the received message
-    toggleLoadingScreen();
-    resetFileInput();
-    
-    const newItem = document.createElement('li');
-    const timestamp = new Date().toLocaleTimeString('en-US', options);
-    newItem.textContent = `${timestamp} - ${message}`;
-    messageList.appendChild(newItem);
-});
-
 let fileUploaded = false; // Flag to track if a file is uploaded
+let uuidClient;
 document.getElementById('uploadForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent form submission
     const textInput = document.getElementById('textInput').value.trim(); // Trim whitespace from input
@@ -88,9 +77,17 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     // Add the entered text to the list
     if (textInput) {
+        alertMessage.style.display = 'none';
         const listItem = document.createElement('li');
         listItem.textContent = `${timestamp} - ${textInput}`;
         messageList.appendChild(listItem);
+    }
+    else {
+        // Display a message if textInput is empty
+        console.log("No text input provided.");
+        alertMessage.style.display = 'block';
+        // You can add code here to display a message to the user if needed
+        return; // Exit the function early since there's nothing else to do
     }
 
     // Upload files to Google Cloud Storage if a file is selected
@@ -108,6 +105,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
                 body: formData
             });
             const data = await response.json();
+            uuidClient = data.postMessage.uuid;
             console.log(data);
 
             // Hide file input and select file button after successful upload
@@ -138,6 +136,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
                 body: jsonData
             });
             const data = await response.json();
+            uuidClient = data.postMessage.uuid;
             console.log(data);
             
         } catch (error) {
@@ -149,6 +148,20 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
     // Handle text input (with or without file upload)
     // Add your code to handle text input here, such as printing it or processing it in some way
     console.log('Text Input:', textInput);
+});
+
+// Event listener for WebSocket messages
+socket.on('notification', function(message) {
+    if (uuidClient === message.uuid) {
+        // Update the UI with the received message
+        toggleLoadingScreen();
+        resetFileInput();
+        
+        const newItem = document.createElement('li');
+        const timestamp = new Date().toLocaleTimeString('en-US', options);
+        newItem.textContent = `${timestamp} - ${message.response}`;
+        messageList.appendChild(newItem);
+    }
 });
 
 dragDropBox.addEventListener('dragover', (event) => {
@@ -200,6 +213,24 @@ newConversationButton.addEventListener('click', async () => {
         console.error('Error:', error);
     }
 });
+
+if (exposeStatisticsButton) {
+exposeStatisticsButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/statistics', {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            console.error('Request failed with status:', response.status);
+            return; // Stop further execution
+        }
+        window.location.href = '/statistics';
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+}
 
 // Button to remove file
 removeFileButton.addEventListener('click', () => {

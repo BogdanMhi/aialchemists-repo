@@ -49,10 +49,45 @@ function isAuthenticated(req, res, next) {
   }
 }
 
+app.get('/statistics', isAuthenticated, async (req, res) => {
+  const {uuid, admin} = req.session.user;
+  try {
+      if (admin) {
+        res.render('statistics', {uuid, admin});
+      }
+      else {
+        res.status(403).json({ success: false, message: 'Not an admin user.' });
+      }
+    } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+app.post('/generatestats', isAuthenticated, async (req, res) => {
+  const { uuid, admin } = req.session.user;
+  try {
+      if (admin) {
+          const { timeframe } = req.body; // No need for req.body.timeframe
+          // Perform data validation if necessary (e.g., check if timeframe is valid)
+          const postMessage = {
+              "uuid": uuid,
+              "timeframe": timeframe
+          };
+          await publishMessage('stats_generator_trigger', JSON.stringify(postMessage));
+          res.status(200).json({ success: true, message: 'Statistics generation request sent successfully', postMessage });
+      } else {
+          res.status(403).json({ success: false, message: 'User does not have admin privileges.' });
+      }
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
 app.get('/newconversation', isAuthenticated, async (req, res) => {
   try {
       cleanUserConversation(req.session.user.uuid);
-      console.log("I'm here!")
       res.status(200).json({ success: true});
   } catch (error) {
       // Handle any errors that occur during the process of starting a new conversation
@@ -106,9 +141,10 @@ app.post('/register', async (req, res) => {
 // Serve frontend
 app.get('/', isAuthenticated, async (req, res) => {
   try {
-    const messages = await chatHistory(req.session.user.uuid);
+    const {uuid, admin} = req.session.user;
+    const messages = await chatHistory(uuid);
     console.log(messages);
-    res.render('index.ejs', { messages });
+    res.render('index.ejs', { messages, admin});
   } catch (error) {
     console.error('Error retrieving chat history:', error);
     res.status(500).send('Internal Server Error');
@@ -140,7 +176,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
       postMessage.statement = textInput;
       await updateDb(postMessage.statement, postMessage.uuid);
       await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-      res.json({ message: 'Upload successful', data: postMessage });
+      res.json({ message: 'Upload successful', postMessage });
     }
     else if (file) {
       console.log(`Processing file: ${file.originalname}`);
@@ -151,7 +187,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
           await updateDb(postMessage.statement, postMessage.uuid)
       }
       await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-      res.json({ message: 'Upload successful', data: postMessage });
+      res.json({ message: 'Upload successful', postMessage });
     }
   } catch (error) {
     console.error('Error during upload:', error);
@@ -164,15 +200,37 @@ app.post('/model', async (req, res) => {
   try {
     const response = req.body.response;
     const uuid = req.body.uuid;
+    const postMessage = {
+      "uuid": uuid,
+      "response": response
+    };
     console.log(`Response model: ${response}`);
     await updateDb(response, uuid, model_output=true);
     // await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-    io.emit('notification', response);
+    io.emit('notification', postMessage);
     res.status(200).json({ message: 'Notification sent successfully' });
   } catch (error) {
     console.error('Error sending notification:', error);
     res.status(500).json({ message: 'Failed to send notification', error: error.message });
   }
 });
+
+app.post('/stats', async (req, res) => {
+  try {
+    const response = req.body.response;
+    const uuid = req.body.uuid;
+    const postMessage = {
+      "uuid": uuid,
+      "response": response
+    };
+    // await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
+    io.emit('stats', postMessage);
+    res.status(200).json({ message: 'Notification sent successfully' });
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    res.status(500).json({ message: 'Failed to send notification', error: error.message });
+  }
+});
+
 
 module.exports = server;

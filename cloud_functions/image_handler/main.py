@@ -7,7 +7,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request
 from google.cloud import storage
 from google.cloud import bigquery
-from google.cloud import firestore
 from utilities.publisher import publish_message
 from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, INGESTION_DATA_BUCKET
 
@@ -24,6 +23,15 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 bq_client = bigquery.Client(project=PROJECT_ID)
 
 def check_events_duplicates(event_id):
+    """
+    Check if an event ID already exists in BigQuery table to prevent duplicate processing.
+
+    Args:
+        event_id (str): The ID of the event.
+
+    Returns:
+        bool: True if the event ID exists, False otherwise.
+    """
     table_id = f"{PROJECT_ID}.idempotency.image_handler_msg_ids"
     query = f"SELECT count(message_id) total_rows FROM `{table_id}` WHERE message_id = '{event_id}'"
     results = bq_client.query(query)
@@ -33,25 +41,16 @@ def check_events_duplicates(event_id):
         else:
             bq_client.query(f"INSERT INTO `{table_id}` VALUES ('{event_id}')")
             return False
-
-def check_firestore_state(uuid):
-    firestore_client = firestore.Client(project=PROJECT_ID, database='ai-alchemists-db')
-    collection_ref = firestore_client.collection(uuid)
-    query = collection_ref.order_by('timestamp')
-    documents = [doc.to_dict() for doc in query.stream()]
-    latest_doc = documents[-1]
-    for key, value in latest_doc.items():
-        if key not in ("timestamp"):
-            return key
         
 def extract_content_from_image(image_path):
     """
-    Docstrings
+    Extract textual content from an image.
 
     Args:
-        image_path (str): The path to the image file to be checked.
-    Returns:
+        image_path (str): The path to the image file.
 
+    Returns:
+        str: The extracted textual content from the image.
     """
     image = Image.open(image_path)
     enc_image = model.encode_image(image)
@@ -60,6 +59,12 @@ def extract_content_from_image(image_path):
     return image_context
 
 def image_handler(pubsub_message):
+    """
+    Process images and extract textual content.
+
+    Args:
+        pubsub_message (str): The Pub/Sub message containing image information.
+    """
     pubsub_message_json = json.loads(pubsub_message)
     file_path_blob = pubsub_message_json["file_path"]
 
@@ -80,7 +85,12 @@ def image_handler(pubsub_message):
 
 @app.route("/", methods=["POST"])
 def index():
-    """Receive and parse Pub/Sub messages."""
+    """
+    Receive and parse Pub/Sub messages.
+    
+    This function receives Pub/Sub messages, checks for their validity,
+    and processes them if they contain image data.
+    """
     envelope = request.get_json()
     if not envelope:
         msg = "no Pub/Sub message received"
@@ -96,7 +106,7 @@ def index():
     if isinstance(pubsub_message, dict) and "data" in pubsub_message:
         message = base64.b64decode(pubsub_message["data"]).decode("utf-8").strip()
         context = pubsub_message["message_id"]
-        if not check_events_duplicates(context) and check_firestore_state(json.loads(message)['uuid']) == 'statement':
+        if not check_events_duplicates(context):
             image_handler(message)
 
     return ("", 200)
