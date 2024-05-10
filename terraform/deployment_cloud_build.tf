@@ -1,7 +1,7 @@
 module "gcloud" {
   source  = "terraform-google-modules/gcloud/google"
   version = "~> 3.4"
-  skip_download = "true"
+  #skip_download = "true"
   platform = "linux"
   additional_components = ["kubectl", "beta"]
 
@@ -9,7 +9,7 @@ module "gcloud" {
   create_cmd_body        = "version"
   #destroy_cmd_entrypoint = "gcloud"
   #destroy_cmd_body       = "version"
-  depends_on = [ google_project_service.enable_artifact_registry_api ]
+  #depends_on = [ google_project_service.enable_artifact_registry_api ]
 }
 
 resource "null_resource" "deploy_web_app" {
