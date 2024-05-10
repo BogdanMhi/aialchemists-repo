@@ -20,6 +20,6 @@ resource "null_resource" "deploy_web_app" {
 
   # Define provisioner or other configuration as needed
   provisioner "local-exec" {
-    command = "gcloud run deploy web-app-tg --region=${var.region} --source=${var.web_app_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=3600s --cpu=4 --memory=8Gi"
+    command = "gcloud run deploy web-app-tg --region=${var.region} --source=${var.web_app_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=3600s --cpu=4 --memory=8Gi --allow-unauthenticated=true"
   }
 }
