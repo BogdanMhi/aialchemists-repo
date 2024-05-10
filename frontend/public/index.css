@@ -172,3 +172,9 @@ h1 {
 .start-conversation-button:hover {
   background-color: #45a049;
 }
+
+.buttons-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
