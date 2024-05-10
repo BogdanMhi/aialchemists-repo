@@ -11,7 +11,7 @@ terraform {
   required_providers {
     google = {source = "hashicorp/google"}
     random = {source = "hashicorp/random"}
-    #docker = {source = "kreuzwerker/docker"}
+    docker = {source = "kreuzwerker/docker"}
   }
 }
 
@@ -20,7 +20,7 @@ provider "google" {
   region  = var.region
   # zone    = var.zone
 }
-/*
+
 provider "docker" {
   alias = "docker_images"
   registry_auth {
@@ -29,4 +29,3 @@ provider "docker" {
     password = data.google_client_config.default.access_token
   }
 }
-*/
