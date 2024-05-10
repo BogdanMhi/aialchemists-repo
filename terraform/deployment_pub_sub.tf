@@ -46,7 +46,7 @@ resource "google_pubsub_subscription" "document_handler_sub" {
 resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
   subscription = google_pubsub_subscription.document_handler_sub.name
   role    = "roles/pubsub.subscriber"
-  members = [google_eventarc_trigger.trigger_document_handler.id]
+  members = [google_eventarc_trigger.trigger_document_handler]
   depends_on = [google_pubsub_subscription.document_handler_sub]
 }
 
@@ -89,7 +89,7 @@ resource "google_pubsub_subscription" "image_handler_sub" {
 resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
   subscription = google_pubsub_subscription.image_handler_sub.name
   role    = "roles/pubsub.subscriber"
-  members = [google_eventarc_trigger.trigger_image_handler.id]
+  members = [google_eventarc_trigger.trigger_image_handler]
   depends_on = [google_pubsub_subscription.image_handler_sub]
 }
 
@@ -144,6 +144,6 @@ resource "google_pubsub_subscription" "video_handler_sub" {
 resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
   subscription = google_pubsub_subscription.video_handler_sub.name
   role    = "roles/pubsub.subscriber"
-  members = [google_eventarc_trigger.trigger_video_handler.id]
+  members = [google_eventarc_trigger.trigger_video_handler]
   depends_on = [google_pubsub_subscription.video_handler_sub]
 }
