@@ -35,7 +35,9 @@ function updateSelectedTimeframe(option) {
 }
 
 function createLegendItems(keywords, colorScale) {
-    
+    while (legendContainer.firstChild) {
+        legendContainer.removeChild(legendContainer.firstChild);
+    }
     keywords.forEach((keyword, index) => {
         const color = colorScale[index];
         const listItem = document.createElement('li');
