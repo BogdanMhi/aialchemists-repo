@@ -211,6 +211,7 @@ newConversationButton.addEventListener('click', async () => {
     }
 });
 
+if (exposeStatisticsButton) {
 exposeStatisticsButton.addEventListener('click', async () => {
     try {
         const response = await fetch('/statistics', {
@@ -226,6 +227,7 @@ exposeStatisticsButton.addEventListener('click', async () => {
         console.error('Error:', error);
     }
 });
+}
 
 // Button to remove file
 removeFileButton.addEventListener('click', () => {
