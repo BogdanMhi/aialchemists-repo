@@ -14,9 +14,10 @@ module "gcloud" {
 
 resource "null_resource" "deploy_web_app" {
   # Define triggers based on a frequently changing attribute of an existing Azure resource
-  triggers = {
-    dir_sha1 = sha1(join("", [for f in fileset(path.module, var.web_app_source_path) : filesha1(f)]))
-  }
+  #triggers = {
+  #  dir_sha1 = sha1(join("", [for f in fileset(path.module, var.web_app_source_path) : filesha1(f)]))
+  #}
+  triggers = {always_run = timestamp()}
 
   # Define provisioner or other configuration as needed
   provisioner "local-exec" {
