@@ -13,6 +13,7 @@ resource "google_project_service" "pubsub_api" {
 #  permissions = ["pubsub.subscriptions.get", "pubsub.subscriptions.consume"]
 #}
 
+
 ## document_handler
 resource "google_pubsub_topic" "document_handler_function" {
     name = var.document_handler_topic_name
