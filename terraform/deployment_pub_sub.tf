@@ -30,6 +30,12 @@ resource "google_pubsub_topic" "iot_handler_function" {
     message_storage_policy { allowed_persistence_regions = [ var.region ] }
 }
 
+## stats_generator
+resource "google_pubsub_topic" "stats_generator_function" {
+    name = var.stats_generator_topic_name
+    message_storage_policy { allowed_persistence_regions = [ var.region ] }
+}
+
 ## text_processor
 resource "google_pubsub_topic" "text_processor_function" {
     name = var.text_processor_topic_name

@@ -1,0 +1,10 @@
+# Function dependencies, for example:
+# package>=version
+# Function dependencies, for example:
+# package>=version
+functions-framework==3.*
+google-cloud-bigquery
+google-cloud-firestore
+langchain
+langchain-openai
+langchain_community
