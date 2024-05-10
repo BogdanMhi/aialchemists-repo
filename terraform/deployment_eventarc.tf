@@ -1,3 +1,4 @@
+/*
 # Eventarc
 # Enable Eventarc API
 resource "google_project_service" "eventarc_api" {
@@ -90,3 +91,4 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
     google_cloud_run_v2_service.video_handler
   ]
 }
+*/
