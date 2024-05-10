@@ -35,7 +35,7 @@ resource "google_pubsub_subscription" "document_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_document_handler.id}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_document_handler.id}
   depends_on = [
     google_eventarc_trigger.trigger_document_handler,
     google_pubsub_topic.document_handler_function
@@ -43,12 +43,12 @@ resource "google_pubsub_subscription" "document_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.document_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_document_handler.id]
-#  depends_on = [google_pubsub_subscription.document_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.document_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_document_handler.id]
+  depends_on = [google_pubsub_subscription.document_handler_sub]
+}
 
 ## format_classifier
 resource "google_pubsub_topic" "format_classifier_function" {
@@ -78,7 +78,7 @@ resource "google_pubsub_subscription" "image_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_image_handler.id}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_image_handler.id}
   depends_on = [
     google_eventarc_trigger.trigger_image_handler,
     google_pubsub_topic.image_handler_function
@@ -86,12 +86,12 @@ resource "google_pubsub_subscription" "image_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.image_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_image_handler.id]
-#  depends_on = [google_pubsub_subscription.image_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.image_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_image_handler.id]
+  depends_on = [google_pubsub_subscription.image_handler_sub]
+}
 
 ## iot_handler
 resource "google_pubsub_topic" "iot_handler_function" {
@@ -133,7 +133,7 @@ resource "google_pubsub_subscription" "video_handler_sub" {
     dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
     max_delivery_attempts=0
   }
-  push_config {push_endpoint = google_eventarc_trigger.trigger_video_handler.id}
+  #push_config {push_endpoint = google_eventarc_trigger.trigger_video_handler.id}
   depends_on = [
     google_eventarc_trigger.trigger_video_handler,
     google_pubsub_topic.video_handler_function
@@ -141,9 +141,9 @@ resource "google_pubsub_subscription" "video_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.video_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_video_handler.id]
-#  depends_on = [google_pubsub_subscription.video_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.video_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_video_handler.id]
+  depends_on = [google_pubsub_subscription.video_handler_sub]
+}
