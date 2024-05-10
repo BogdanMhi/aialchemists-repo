@@ -24,6 +24,8 @@ const newConversationButton = document.getElementById('newConversationButton');
 const fileInput = document.getElementById('fileInput');
 const fileSelectButton = document.getElementById('fileSelectButton');
 const messageList = document.getElementById('messageList');
+const alertMessage = document.getElementById('alertMessage');
+const exposeStatisticsButton = document.getElementById('exposeStatisticsButton');
 
 
 // Function to hide file input and select file button
@@ -88,9 +90,17 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
 
     // Add the entered text to the list
     if (textInput) {
+        alertMessage.style.display = 'none';
         const listItem = document.createElement('li');
         listItem.textContent = `${timestamp} - ${textInput}`;
         messageList.appendChild(listItem);
+    }
+    else {
+        // Display a message if textInput is empty
+        console.log("No text input provided.");
+        alertMessage.style.display = 'block';
+        // You can add code here to display a message to the user if needed
+        return; // Exit the function early since there's nothing else to do
     }
 
     // Upload files to Google Cloud Storage if a file is selected
@@ -195,6 +205,22 @@ newConversationButton.addEventListener('click', async () => {
             messageList.removeChild(messageList.firstChild);
         }
         const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+exposeStatisticsButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/statistics', {
+            method: 'GET'
+        });
+        if (!response.ok) {
+            console.error('Request failed with status:', response.status);
+            return; // Stop further execution
+        }
+        window.location.href = '/statistics';
         console.log(data);
     } catch (error) {
         console.error('Error:', error);
