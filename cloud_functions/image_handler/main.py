@@ -16,9 +16,9 @@ client_storage = storage.Client()
 model_id = "vikhyatk/moondream2"
 revision = "2024-04-02"
 model = AutoModelForCausalLM.from_pretrained(
-    model_id, trust_remote_code=True, revision=revision, cache_dir="model_available/"
+    model_id, trust_remote_code=True, revision=revision
 )
-tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, cache_dir="model_available/")
+tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
 
 bq_client = bigquery.Client(project=PROJECT_ID)
 
