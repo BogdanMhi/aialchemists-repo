@@ -1,4 +1,4 @@
-#import os
+import os
 import base64
 import json
 import requests
@@ -19,15 +19,28 @@ llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
 
 
 def check_firestore_documents():
-    """Extracts documents from all Firestore collections."""
+    """Extracts documents from history collection. 
+    The history collection contains all the conversations between all the users and the model.
+    
+    Returns:
+        documents (list): List of documents extracted from history collection"""
+    
     firestore_client = firestore.Client(project=PROJECT_ID, database=FIRESTORE_DATABASE_ID)
     collection_ref = firestore_client.collection(HISTORY_COLLECTION)
     query = collection_ref.order_by('timestamp')
     documents = [doc.to_dict() for doc in query.stream()]
+
     return documents
 
 def classify_collection(user_input):
-    """Classifies documents based on the given timeframe."""
+    """Classifies documents based on the given timeframe.
+    
+    Args:
+        user_input (str): The timeframe for classifying documents ('today', '7days', 'month', '6months', 'year') selected by the user in the UI.
+
+    Returns:
+        list: List of classified documents based on user input."""
+    
     documents = check_firestore_documents()
     current_time = datetime.now().replace(microsecond=0)
 
@@ -49,18 +62,35 @@ def classify_collection(user_input):
         return current_year_collection
 
 def check_admin_users(uuid):
-    """Checks if the user is an admin."""
+    """Checks if the user is an admin.
+    
+    Args:
+        uuid (str): Unique identifier of the user
+
+    Returns:
+        bool: True if the user is an admin, False otherwise."""
+    
+    table_id = f"{BIGQUERY_DATABASE_ID}"
     query = (
         f"SELECT COUNT(user_id) "
-        f"FROM `{BIGQUERY_DATABASE_ID}` "
+        f"FROM `{table_id}` "
         f"WHERE uuid = '{uuid}' AND LOWER(admin) = 'true'"
     )
     query_job = bq_client.query(query)
     results = query_job.result()  # Wait for the query to complete and fetch the results
+    
     return len(list(results)) > 0  # Check if any rows are returned
 
 def stats_generator(event, context):
-    """Generates statistics based on the provided timeframe."""
+    """Generates statistics based on the provided timeframe.
+    
+    Args:
+        timeframe (str): The timeframe for classifying documents ('today', '7days', 'month', '6months', 'year').
+        uuid      (str): Unique identifier of the user.
+
+    Returns:
+        output_model: JSON formatted string that contains the keywords and their frequency in the conversation history of the model"""
+    
     pubsub_message = base64.b64decode(event["data"]).decode("utf-8")
     pubsub_message_json = json.loads(pubsub_message)
     timeframe = pubsub_message_json['timeframe']
