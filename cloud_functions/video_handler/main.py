@@ -75,7 +75,12 @@ def video_handler(pubsub_message):
 
 @app.route("/", methods=["POST"])
 def index():
-    """Receive and parse Pub/Sub messages."""
+    """
+    Receive and parse Pub/Sub messages.
+    
+    This function receives Pub/Sub messages, checks for their validity,
+    and processes them if they contain audio/video files or YouTube links.
+    """
     envelope = request.get_json()
     if not envelope:
         msg = "no Pub/Sub message received"

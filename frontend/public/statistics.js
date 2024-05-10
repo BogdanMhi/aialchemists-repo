@@ -4,6 +4,15 @@ socket.on('connect_error', (error) => {
     console.error('Connection Error:', error);
 });
 
+function toggleLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (window.getComputedStyle(loadingScreen).display === 'flex') {
+        loadingScreen.style.display = 'none';
+    } else {
+        loadingScreen.style.display = 'flex';
+    }
+}
+
 const dynamicOptions = ['Today', 'Last 7 Days', 'Last Month', 'Last 6 Months', 'Last Year'];
 const legendContainer = document.getElementById('legend');
 const ctx = document.getElementById('barChart').getContext('2d');
@@ -55,7 +64,7 @@ function createChart(data){
     // Sort data based on the frequency
     data.sort((a, b) => b.frequency - a.frequency);
     
-    const keywords = data.map(item => item.keywords);
+    const keywords = data.map(item => item.keyword);
     const frequencies = data.map(item => item.frequency);
     
     // Generate colors using Chroma.js color scale
@@ -94,6 +103,7 @@ function createChart(data){
 }
 createChart([]);
 
+let uuidClient;
 // Populate the dropdown with dynamic options
 const timeframeSelect = document.getElementById('timeframeSelect');
 dynamicOptions.forEach(option => {
@@ -117,7 +127,9 @@ generateBtn.addEventListener('click', async () => {
                 'Content-Type': 'application/json' // Set Content-Type header
             }
         });
+        toggleLoadingScreen();
         const data = await response.json();
+        uuidClient = data.postMessage.uuid;
         console.log(data);
     } catch (error) {
         console.error('Error:', error);
@@ -127,10 +139,11 @@ generateBtn.addEventListener('click', async () => {
 
 // Event listener for WebSocket messages
 socket.on('stats', function(message) {
-    // Update the UI with the received message
-    console.log(typeof message);
-    console.log(message);
-    createChart(JSON.parse(message));
-    updateSelectedTimeframe(timeframeSelect.value);
-
+    if (uuidClient === message.uuid) {
+        toggleLoadingScreen();
+        // Update the UI with the received message
+        createChart(JSON.parse(message.response));
+        // createChart(message);
+        updateSelectedTimeframe(timeframeSelect.value);
+    }
 });

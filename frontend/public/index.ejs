@@ -33,16 +33,21 @@
             <form id="uploadForm" enctype="multipart/form-data">
                 <input type="submit" value="Submit" class="submit-button"> <!-- Submit button -->
             </form>
-            <% if ( admin ) { %>
-                <button id="exposeStatisticsButton" class="start-conversation-button">Expose Statistics</button>
-            <% } %>
-            <button id="newConversationButton" class="start-conversation-button">Start a New Conversation</button>
+            <div class="buttons-section">
+                <button id="newConversationButton" class="start-conversation-button">Start a New Conversation</button>
+                <% if ( admin ) { %>
+                    <button id="exposeStatisticsButton" class="start-conversation-button">Expose Statistics</button>
+                <% } %>
+            </div>
         </div>
 
         <div id="loadingScreen" class="loading-screen" style="display: none;">
             <div class="loading-spinner"></div>
         </div>
         <div id="alertMessage" style="display: none; color: red;">Please provide some text.</div> <!-- Message display area -->
+        <footer>
+            <p>&copy; 2024 AI Alchemists</p>
+        </footer>
     </div>
     <!-- [START cloudrun_websockets_client] -->
     <script src="/socket.io/socket.io.js"></script>
