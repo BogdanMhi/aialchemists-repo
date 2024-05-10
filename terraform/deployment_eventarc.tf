@@ -61,7 +61,6 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
     }
   }
   depends_on = [
-    google_project_iam_member.bigquery_job_user,
     null_resource.deploy_document_handler
   ]
 }
@@ -91,7 +90,6 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
     }
   }
   depends_on = [
-    google_project_iam_member.bigquery_job_user,
     null_resource.deploy_image_handler
   ]
 }
@@ -121,7 +119,6 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
     }
   }
   depends_on = [
-    google_project_iam_member.bigquery_job_user,
     null_resource.deploy_video_handler
   ]
 }
