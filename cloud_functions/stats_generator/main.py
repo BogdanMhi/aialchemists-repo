@@ -2,13 +2,14 @@ import os
 import base64
 import json
 import requests
+import pytz
 from google.cloud import firestore
 from datetime import datetime
 from google.cloud import bigquery
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
-from utilities.settings import *
+from utilities.settings import PROJECT_ID, FIRESTORE_DATABASE_ID, AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, HISTORY_COLLECTION, BIGQUERY_DATABASE_ID
 
 bq_client = bigquery.Client(project=PROJECT_ID)
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -42,7 +43,8 @@ def classify_collection(user_input):
         list: List of classified documents based on user input."""
     
     documents = check_firestore_documents()
-    current_time = datetime.now().replace(microsecond=0)
+    tz = pytz.timezone('Europe/Bucharest')
+    current_time = datetime.now(tz).replace(microsecond=0).replace(tzinfo=None)
 
     today_collection = [doc for doc in documents if (current_time - datetime.strptime(doc['timestamp'], ("%m/%d/%Y, %H:%M:%S"))).days == 0]
     current_7days_collection = [doc for doc in documents if (current_time - datetime.strptime(doc['timestamp'], ("%m/%d/%Y, %H:%M:%S"))).days <= 7]
@@ -70,10 +72,9 @@ def check_admin_users(uuid):
     Returns:
         bool: True if the user is an admin, False otherwise."""
     
-    table_id = f"{BIGQUERY_DATABASE_ID}"
     query = (
         f"SELECT COUNT(user_id) "
-        f"FROM `{table_id}` "
+        f"FROM `{BIGQUERY_DATABASE_ID}` "
         f"WHERE uuid = '{uuid}' AND LOWER(admin) = 'true'"
     )
     query_job = bq_client.query(query)

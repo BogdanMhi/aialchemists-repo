@@ -21,7 +21,7 @@ resource "null_resource" "deploy_web_app" {
   }
   depends_on = [
     google_artifact_registry_repository.cloud_run_repository,
-    google_project_service.eventarc_api
+    google_project_iam_member.bigquery_job_user
   ]
 }
 
@@ -35,12 +35,9 @@ resource "null_resource" "deploy_document_handler" {
 
   # Define provisioner or other configuration as needed
   provisioner "local-exec" {
-    command = "gcloud run deploy ${var.document_handler_source_name} --region=${var.region} --source=${var.document_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=300s --cpu=2 --memory=4Gi --set-env-vars=PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name} --allow-unauthenticated--service-account=${google_service_account.eventarc_service_account.email}"
+    command = "gcloud run deploy ${var.document_handler_source_name} --region=${var.region} --source=${var.document_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=300s --cpu=2 --memory=4Gi --set-env-vars=PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name} --allow-unauthenticated --service-account=${google_service_account.eventarc_service_account.email}"
   }
-  depends_on = [
-    google_artifact_registry_repository.cloud_run_repository,
-    google_project_service.eventarc_api
-  ]
+  depends_on = [null_resource.deploy_web_app]
 }
 
 # image_handler
@@ -53,12 +50,9 @@ resource "null_resource" "deploy_image_handler" {
 
   # Define provisioner or other configuration as needed
   provisioner "local-exec" {
-    command = "gcloud run deploy ${var.image_handler_source_name} --region=${var.region} --source=${var.image_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=900s --cpu=8 --memory=32Gi --set-env-vars=PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name},FIRESTORE_DATABASE_ID=${var.firestore_database_name} --allow-unauthenticated--service-account=${google_service_account.eventarc_service_account.email}"
+    command = "gcloud run deploy ${var.image_handler_source_name} --region=${var.region} --source=${var.image_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=900s --cpu=8 --memory=32Gi --set-env-vars=PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name},FIRESTORE_DATABASE_ID=${var.firestore_database_name} --allow-unauthenticated --service-account=${google_service_account.eventarc_service_account.email}"
   }
-  depends_on = [
-    google_artifact_registry_repository.cloud_run_repository,
-    google_project_service.eventarc_api
-  ]
+  depends_on = [null_resource.deploy_document_handler]
 }
 
 # video_handler
@@ -73,8 +67,5 @@ resource "null_resource" "deploy_video_handler" {
   provisioner "local-exec" {
     command = "gcloud run deploy ${var.video_handler_source_name} --region=${var.region} --source=${var.video_handler_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=900s --cpu=8 --memory=32Gi --set-env-vars=PROJECT_ID=${var.project},TEXT_PROCESSOR_TRIGGER=${google_pubsub_topic.text_processor_function.name},INGESTION_DATA_BUCKET=${google_storage_bucket.ingestion_bucket.name} --allow-unauthenticated --service-account=${google_service_account.eventarc_service_account.email}"
   }
-  depends_on = [
-    google_artifact_registry_repository.cloud_run_repository,
-    google_project_service.eventarc_api
-  ]
+  depends_on = [null_resource.deploy_video_handler]
 }
