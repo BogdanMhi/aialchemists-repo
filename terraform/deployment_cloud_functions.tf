@@ -1,64 +1,10 @@
-## document_handler
-data "archive_file" "zip_document_handler" {
-  type        = "zip"
-  source_dir  = "../cloud_functions/document_handler"
-  output_path = "assets/document_handler.zip"
-}
-
-resource "google_storage_bucket_object" "document_handler_sourcecode" {
-  name = format(
-    "%s#%s",
-    "document_handler/function-source.zip",
-    data.archive_file.zip_document_handler.output_md5
-  )
-  bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = data.archive_file.zip_document_handler.output_path
-}
-
-resource "google_cloudfunctions2_function" "document_handler" {
-  location = "europe-west1"
-  name     = var.document_handler_function_name
-  project  = var.project
-
-  timeouts {
-    create = "60m"
-    update = "60m"
-  }
-
-  build_config {
-    runtime     = var.document_handler_python_version
-    entry_point = var.document_handler_entry_point
-    source {
-      storage_source {
-        bucket = "gcf-v2-sources-957891796445-europe-west3"
-        object = google_storage_bucket_object.document_handler_sourcecode.name
-      }
-    }
-  }
-
-  service_config {
-    environment_variables = {
-      PROJECT_ID = var.project
-      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
-    }
-    max_instance_count = 350
-    available_memory   = var.document_handler_function_memory
-    available_cpu      = "4"
-    timeout_seconds    = 540
-    all_traffic_on_latest_revision = true
-  }
-
-  event_trigger {
-    trigger_region = var.region
-    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
-    pubsub_topic   = "projects/${var.project}/topics/${google_pubsub_topic.document_handler_function.name}"
-    retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
-  }
-
-  depends_on = [
-    google_storage_bucket_object.document_handler_sourcecode
-  ]
-}
+## Create Service Account for Cloud Functions
+#resource "google_service_account" "cloud_functions" {
+#  project = var.project
+#  account_id = var.cloud_functions_sa_id
+#  display_name = var.cloud_functions_sa_display
+#  description = "Service Account for Cloud Functions"
+#}
 
 ## format_classifier
 data "archive_file" "zip_format_classifier" {
@@ -114,68 +60,6 @@ resource "google_cloudfunctions_function" "format_classifier" {
   ]
 }
 
-## image_handler
-data "archive_file" "zip_image_handler" {
-  type        = "zip"
-  source_dir  = "../cloud_functions/image_handler"
-  output_path = "assets/image_handler.zip"
-}
-
-resource "google_storage_bucket_object" "image_handler_sourcecode" {
-  name = format(
-    "%s#%s",
-    "image_handler/function-source.zip",
-    data.archive_file.zip_image_handler.output_md5
-  )
-  bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = data.archive_file.zip_image_handler.output_path
-}
-
-resource "google_cloudfunctions2_function" "image_handler" {
-  location = "europe-west1"
-  name     = var.image_handler_function_name
-  project  = var.project
-
-  timeouts {
-    create = "60m"
-    update = "60m"
-  }
-
-  build_config {
-    runtime     = var.image_handler_python_version
-    entry_point = var.image_handler_entry_point
-    source {
-      storage_source {
-        bucket = "gcf-v2-sources-957891796445-europe-west3"
-        object = google_storage_bucket_object.image_handler_sourcecode.name
-      }
-    }
-  }
-
-  service_config {
-    environment_variables = {
-      PROJECT_ID = var.project
-      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
-    }
-    max_instance_count = 350
-    available_memory   = var.image_handler_function_memory
-    available_cpu      = "4"
-    timeout_seconds    = 540
-    #all_traffic_on_latest_revision = true
-  }
-
-  event_trigger {
-    trigger_region = var.region
-    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
-    pubsub_topic   = "projects/${var.project}/topics/${google_pubsub_topic.image_handler_function.name}"
-    retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
-  }
-
-  depends_on = [
-    google_storage_bucket_object.image_handler_sourcecode
-  ]
-}
-
 ## iot_handler
 data "archive_file" "zip_iot_handler" {
   type        = "zip"
@@ -222,6 +106,62 @@ resource "google_cloudfunctions_function" "iot_handler" {
 
   depends_on = [
     google_storage_bucket_object.iot_handler_sourcecode
+  ]
+}
+
+## stats_generator
+data "archive_file" "zip_stats_generator" {
+  type        = "zip"
+  source_dir  = "../cloud_functions/stats_generator"
+  output_path = "assets/stats_generator.zip"
+}
+
+resource "google_storage_bucket_object" "stats_generator_sourcecode" {
+  name = format(
+    "%s#%s",
+    "stats_generator/function-source.zip",
+    data.archive_file.zip_stats_generator.output_md5
+  )
+  bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source = data.archive_file.zip_stats_generator.output_path
+}
+
+resource "google_cloudfunctions_function" "stats_generator" {
+  timeouts {
+    create = "60m"
+    update = "60m"
+  }
+
+  region                        = var.region
+  name                          = var.stats_generator_function_name
+  entry_point                   = var.stats_generator_entry_point
+  runtime                       = var.stats_generator_python_version
+  ingress_settings              = var.ingress_selection
+  vpc_connector                 = var.vpc_access_connector
+  vpc_connector_egress_settings = var.vpc_egress
+  timeout                       = 540
+  max_instances                 = 500
+  available_memory_mb           = var.stats_generator_function_memory
+
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.stats_generator_function.name
+  }
+
+  source_archive_bucket = "gcf-v2-sources-957891796445-europe-west3"
+  source_archive_object = google_storage_bucket_object.stats_generator_sourcecode.name
+
+  environment_variables = {
+    PROJECT_ID = var.project
+    FIRESTORE_DATABASE_ID = var.firestore_database_name
+    BIGQUERY_DATABASE_ID = "${var.project}.${var.bigquery_database_name}.${var.bigquery_database_table}"
+    HISTORY_COLLECTION = "history"
+    AZURE_OPENAI_API_KEY = var.text_processor_azure_api_key
+    AZURE_OPENAI_ENDPOINT = var.text_processor_azure_endpoint
+  }
+
+  depends_on = [
+    google_storage_bucket_object.stats_generator_sourcecode
   ]
 }
 
@@ -277,67 +217,5 @@ resource "google_cloudfunctions_function" "text_processor" {
 
   depends_on = [
     google_storage_bucket_object.text_processor_sourcecode
-  ]
-}
-
-## video_handler
-data "archive_file" "zip_video_handler" {
-  type        = "zip"
-  source_dir  = "../cloud_functions/video_handler"
-  output_path = "assets/video_handler.zip"
-}
-
-resource "google_storage_bucket_object" "video_handler_sourcecode" {
-  name = format(
-    "%s#%s",
-    "video_handler/function-source.zip",
-    data.archive_file.zip_video_handler.output_md5
-  )
-  bucket = "gcf-v2-sources-957891796445-europe-west3"
-  source = data.archive_file.zip_video_handler.output_path
-}
-
-resource "google_cloudfunctions2_function" "video_handler" {
-  location = var.region
-  name     = var.video_handler_function_name
-  project  = var.project
-
-  timeouts {
-    create = "60m"
-    update = "60m"
-  }
-
-  build_config {
-    runtime     = var.video_handler_python_version
-    entry_point = var.video_handler_entry_point
-    source {
-      storage_source {
-        bucket = "gcf-v2-sources-957891796445-europe-west3"
-        object = google_storage_bucket_object.video_handler_sourcecode.name
-      }
-    }
-  }
-
-  service_config {
-    environment_variables = {
-      PROJECT_ID = var.project
-      TEXT_PROCESSOR_TRIGGER = google_pubsub_topic.text_processor_function.name
-    }
-    max_instance_count = 350
-    available_memory   = var.video_handler_function_memory
-    available_cpu      = "4"
-    timeout_seconds    = 540
-    #all_traffic_on_latest_revision = true
-  }
-
-  event_trigger {
-    trigger_region = var.region
-    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
-    pubsub_topic   = "projects/${var.project}/topics/${google_pubsub_topic.video_handler_function.name}"
-    retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
-  }
-
-  depends_on = [
-    google_storage_bucket_object.video_handler_sourcecode
   ]
 }

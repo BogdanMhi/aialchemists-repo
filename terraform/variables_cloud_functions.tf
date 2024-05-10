@@ -2,6 +2,8 @@
 variable vpc_access_connector {}
 variable vpc_egress {default = "ALL_TRAFFIC"}
 variable ingress_selection {default = "ALLOW_INTERNAL_ONLY"}
+variable cloud_functions_sa_id {default = "cloudfunctions"}
+variable cloud_functions_sa_display {default = "GCF Service Account"}
 
 ## document_handler
 variable document_handler_function_name {default = "document_handler"}
@@ -26,6 +28,12 @@ variable iot_handler_function_name {default = "IoT_handler"}
 variable iot_handler_function_memory {default = 2048}
 variable iot_handler_entry_point {default = "IoT_handler"}
 variable iot_handler_python_version {default = "python310"}
+
+## stats_generator
+variable stats_generator_function_name {default = "stats_generator"}
+variable stats_generator_function_memory {default = 2048}
+variable stats_generator_entry_point {default = "stats_generator"}
+variable stats_generator_python_version {default = "python38"}
 
 ## text_processor
 variable text_processor_function_name {default = "text_processor"}

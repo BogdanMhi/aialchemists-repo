@@ -5,7 +5,7 @@ from flask import Flask, request
 from google.cloud import storage
 from google.cloud import bigquery
 from utilities.publisher import publish_message
-from utilities.settings import TEXT_PROCESSOR_TRIGGER, PROJECT_ID, INGESTION_DATA_BUCKET
+from utilities.settings import *
 from tika import parser
 
 tika.initVM()
