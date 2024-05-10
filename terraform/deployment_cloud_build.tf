@@ -1,9 +1,9 @@
 module "gcloud" {
   source  = "terraform-google-modules/gcloud/google"
   version = "~> 3.4"
-  #skip_download = "false"
+  skip_download = "true"
   platform = "linux"
-  #additional_components = ["kubectl", "beta"]
+  additional_components = ["kubectl", "beta"]
 
   create_cmd_entrypoint  = "gcloud"
   create_cmd_body        = "version"
