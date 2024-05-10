@@ -3,11 +3,9 @@
 //const socket = io('wss://hello-world-app-adwexujega-ey.a.run.app/socket.io/?EIO=4&transport=websocket', {transports: ['websocket', 'polling']});
 // Connect to the WebSocket server
 const socket = io('', {transports: ['websocket']});
-
 socket.on('connect_error', (error) => {
     console.error('Connection Error:', error);
 });
-
 
 const options = {
     timeZone: 'Europe/Bucharest',
@@ -67,19 +65,8 @@ function toggleLoadingScreen() {
     }
 }
 
-// Event listener for WebSocket messages
-socket.on('notification', function(message) {
-    // Update the UI with the received message
-    toggleLoadingScreen();
-    resetFileInput();
-    
-    const newItem = document.createElement('li');
-    const timestamp = new Date().toLocaleTimeString('en-US', options);
-    newItem.textContent = `${timestamp} - ${message}`;
-    messageList.appendChild(newItem);
-});
-
 let fileUploaded = false; // Flag to track if a file is uploaded
+let uuidClient;
 document.getElementById('uploadForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent form submission
     const textInput = document.getElementById('textInput').value.trim(); // Trim whitespace from input
@@ -118,6 +105,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
                 body: formData
             });
             const data = await response.json();
+            uuidClient = data.postMessage.uuid;
             console.log(data);
 
             // Hide file input and select file button after successful upload
@@ -148,6 +136,7 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
                 body: jsonData
             });
             const data = await response.json();
+            uuidClient = data.postMessage.uuid;
             console.log(data);
             
         } catch (error) {
@@ -159,6 +148,20 @@ document.getElementById('uploadForm').addEventListener('submit', async function(
     // Handle text input (with or without file upload)
     // Add your code to handle text input here, such as printing it or processing it in some way
     console.log('Text Input:', textInput);
+});
+
+// Event listener for WebSocket messages
+socket.on('notification', function(message) {
+    if (uuidClient === message.uuid) {
+        // Update the UI with the received message
+        toggleLoadingScreen();
+        resetFileInput();
+        
+        const newItem = document.createElement('li');
+        const timestamp = new Date().toLocaleTimeString('en-US', options);
+        newItem.textContent = `${timestamp} - ${message.response}`;
+        messageList.appendChild(newItem);
+    }
 });
 
 dragDropBox.addEventListener('dragover', (event) => {

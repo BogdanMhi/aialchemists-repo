@@ -75,7 +75,7 @@ app.post('/generatestats', isAuthenticated, async (req, res) => {
               "timeframe": timeframe
           };
           await publishMessage('stats_generator_trigger', JSON.stringify(postMessage));
-          res.status(200).json({ success: true, message: 'Statistics generation request sent successfully', data: postMessage });
+          res.status(200).json({ success: true, message: 'Statistics generation request sent successfully', postMessage });
       } else {
           res.status(403).json({ success: false, message: 'User does not have admin privileges.' });
       }
@@ -176,7 +176,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
       postMessage.statement = textInput;
       await updateDb(postMessage.statement, postMessage.uuid);
       await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-      res.json({ message: 'Upload successful', data: postMessage });
+      res.json({ message: 'Upload successful', postMessage });
     }
     else if (file) {
       console.log(`Processing file: ${file.originalname}`);
@@ -187,7 +187,7 @@ app.post('/upload', isAuthenticated, upload.single('file'), async (req, res) => 
           await updateDb(postMessage.statement, postMessage.uuid)
       }
       await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-      res.json({ message: 'Upload successful', data: postMessage });
+      res.json({ message: 'Upload successful', postMessage });
     }
   } catch (error) {
     console.error('Error during upload:', error);
@@ -200,10 +200,14 @@ app.post('/model', async (req, res) => {
   try {
     const response = req.body.response;
     const uuid = req.body.uuid;
+    const postMessage = {
+      "uuid": uuid,
+      "response": response
+    };
     console.log(`Response model: ${response}`);
     await updateDb(response, uuid, model_output=true);
     // await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-    io.emit('notification', response);
+    io.emit('notification', postMessage);
     res.status(200).json({ message: 'Notification sent successfully' });
   } catch (error) {
     console.error('Error sending notification:', error);
@@ -215,8 +219,12 @@ app.post('/stats', async (req, res) => {
   try {
     const response = req.body.response;
     const uuid = req.body.uuid;
+    const postMessage = {
+      "uuid": uuid,
+      "response": response
+    };
     // await publishMessage('format_classifier_trigger', JSON.stringify(postMessage));
-    io.emit('stats', response);
+    io.emit('stats', postMessage);
     res.status(200).json({ message: 'Notification sent successfully' });
   } catch (error) {
     console.error('Error sending notification:', error);

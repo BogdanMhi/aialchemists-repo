@@ -178,3 +178,13 @@ h1 {
   flex-direction: column;
   align-items: center;
 }
+/* Footer styles */
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #777;
+}
+
+footer p {
+  font-size: 14px;
+}
