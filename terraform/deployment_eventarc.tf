@@ -37,9 +37,10 @@ resource "google_project_service" "eventarc_api" {
 #}
 
 ## document_handler
-resource "google_eventarc_trigger" "trigger-document-handler" {
+resource "google_eventarc_trigger" "trigger_document_handler" {
   name     = "trigger-document-handler"
   location = var.region
+  #service_account = google_service_account.eventarc_service_account.email
 
   matching_criteria {
     attribute = "type"
@@ -53,22 +54,22 @@ resource "google_eventarc_trigger" "trigger-document-handler" {
     }
   }
 
-  #service_account = google_service_account.eventarc_service_account.email
-
   transport {
     pubsub {
       topic = "projects/${var.project}/topics/${google_pubsub_topic.document_handler_function.name}"
     }
   }
+
   depends_on = [
     null_resource.deploy_document_handler
   ]
 }
 
 ## image_handler
-resource "google_eventarc_trigger" "trigger-image-handler" {
+resource "google_eventarc_trigger" "trigger_image_handler" {
   name     = "trigger-image-handler"
   location = var.region
+  #service_account = google_service_account.eventarc_service_account.email
 
   matching_criteria {
     attribute = "type"
@@ -82,22 +83,22 @@ resource "google_eventarc_trigger" "trigger-image-handler" {
     }
   }
 
-  #service_account = google_service_account.eventarc_service_account.email
-
   transport {
     pubsub {
       topic = "projects/${var.project}/topics/${google_pubsub_topic.image_handler_function.name}"
     }
   }
+
   depends_on = [
     null_resource.deploy_image_handler
   ]
 }
 
 ## video_handler
-resource "google_eventarc_trigger" "trigger-video-handler" {
+resource "google_eventarc_trigger" "trigger_video_handler" {
   name     = "trigger-video-handler"
   location = var.region
+  #service_account = google_service_account.eventarc_service_account.email
 
   matching_criteria {
     attribute = "type"
@@ -111,13 +112,12 @@ resource "google_eventarc_trigger" "trigger-video-handler" {
     }
   }
 
-  #ervice_account = google_service_account.eventarc_service_account.email
-
   transport {
     pubsub {
       topic = "projects/${var.project}/topics/${google_pubsub_topic.video_handler_function.name}"
     }
   }
+
   depends_on = [
     null_resource.deploy_video_handler
   ]

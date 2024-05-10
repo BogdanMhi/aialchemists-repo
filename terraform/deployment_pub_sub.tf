@@ -24,16 +24,19 @@ resource "google_pubsub_topic" "document_handler_function" {
 resource "google_pubsub_subscription" "document_handler_sub" {
   name  = var.document_handler_sub_name
   topic = google_pubsub_topic.document_handler_function.name
-
   ack_deadline_seconds         = 600
   enable_exactly_once_delivery = true
+  #expiration_policy {ttl = ""}
+  push_config {
+    push_endpoint = google_eventarc_trigger.trigger_document_handler.name
+  }
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
   subscription = google_pubsub_subscription.document_handler_sub.name
   role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = ["allUsers",]
+  members = [google_eventarc_trigger.trigger_document_handler.name]
 }
 
 ## format_classifier
@@ -52,16 +55,19 @@ resource "google_pubsub_topic" "image_handler_function" {
 resource "google_pubsub_subscription" "image_handler_sub" {
   name  = var.image_handler_sub_name
   topic = google_pubsub_topic.image_handler_function.name
-
   ack_deadline_seconds         = 600
   enable_exactly_once_delivery = true
+  #expiration_policy {ttl = ""} 
+  push_config {
+    push_endpoint = google_eventarc_trigger.trigger_image_handler.name
+  }
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
   subscription = google_pubsub_subscription.image_handler_sub.name
   role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = ["allUsers",]
+  members = [google_eventarc_trigger.trigger_image_handler.name]
 }
 
 ## iot_handler
@@ -92,14 +98,17 @@ resource "google_pubsub_topic" "video_handler_function" {
 resource "google_pubsub_subscription" "video_handler_sub" {
   name  = var.video_handler_sub_name
   topic = google_pubsub_topic.video_handler_function.name
-
   ack_deadline_seconds         = 600
   enable_exactly_once_delivery = true
+  #expiration_policy {ttl = ""}
+ push_config {
+    push_endpoint = google_eventarc_trigger.trigger_video_handler.name
+  }
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
 resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
   subscription = google_pubsub_subscription.video_handler_sub.name
   role    = "projects/${var.project}/roles/${google_project_iam_custom_role.pubsub_subscription_reader.role_id}"
-  members = ["allUsers",]
+  members = [google_eventarc_trigger.trigger_video_handler.name]
 }
