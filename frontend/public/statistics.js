@@ -55,7 +55,7 @@ function createChart(data){
     // Sort data based on the frequency
     data.sort((a, b) => b.frequency - a.frequency);
     
-    const keywords = data.map(item => item.keywords);
+    const keywords = data.map(item => item.keyword);
     const frequencies = data.map(item => item.frequency);
     
     // Generate colors using Chroma.js color scale
@@ -131,6 +131,7 @@ socket.on('stats', function(message) {
     console.log(typeof message);
     console.log(message);
     createChart(JSON.parse(message));
+    // createChart(message);
     updateSelectedTimeframe(timeframeSelect.value);
 
 });
