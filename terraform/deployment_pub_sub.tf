@@ -21,11 +21,20 @@ resource "google_pubsub_topic" "document_handler_function" {
 
 ## document_handler subscription
 resource "google_pubsub_subscription" "document_handler_sub" {
-  name  = var.document_handler_sub_name
+  name = var.document_handler_sub_name
   topic = google_pubsub_topic.document_handler_function.name
-  ack_deadline_seconds         = 600
+  ack_deadline_seconds = 600
+  message_retention_duration = "2400s"
   #enable_exactly_once_delivery = true
-  #expiration_policy {ttl = ""}
+  expiration_policy {ttl = ""}
+  retry_policy {
+    minimum_backoff="10s"
+    maximum_backoff="600"
+  }
+  dead_letter_policy {
+    dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
+    max_delivery_attempts=5
+  }
   push_config {push_endpoint = google_eventarc_trigger.trigger_document_handler.id}
   depends_on = [ 
     google_eventarc_trigger.trigger_document_handler,
@@ -55,11 +64,20 @@ resource "google_pubsub_topic" "image_handler_function" {
 
 ## image_handler subscription
 resource "google_pubsub_subscription" "image_handler_sub" {
-  name  = var.image_handler_sub_name
+  name = var.image_handler_sub_name
   topic = google_pubsub_topic.image_handler_function.name
-  ack_deadline_seconds         = 600
+  ack_deadline_seconds = 600
+  message_retention_duration = "2400s"
   #enable_exactly_once_delivery = true
-  #expiration_policy {ttl = ""} 
+  expiration_policy {ttl = ""}
+  retry_policy {
+    minimum_backoff="10s"
+    maximum_backoff="600"
+  }
+  dead_letter_policy {
+    dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
+    max_delivery_attempts=5
+  }
   push_config {push_endpoint = google_eventarc_trigger.trigger_image_handler.id}
   depends_on = [ 
     google_eventarc_trigger.trigger_image_handler,
@@ -101,11 +119,20 @@ resource "google_pubsub_topic" "video_handler_function" {
 
 ## video_handler subscription
 resource "google_pubsub_subscription" "video_handler_sub" {
-  name  = var.video_handler_sub_name
+  name = var.video_handler_sub_name
   topic = google_pubsub_topic.video_handler_function.name
-  ack_deadline_seconds         = 600
+  ack_deadline_seconds = 600
+  message_retention_duration = "2400s"
   #enable_exactly_once_delivery = true
-  #expiration_policy {ttl = ""}
+  expiration_policy {ttl = ""}
+  retry_policy {
+    minimum_backoff="10s"
+    maximum_backoff="600"
+  }
+  dead_letter_policy {
+    dead_letter_topic="projects/${var.project}/topics/dead-letter-video_handler"
+    max_delivery_attempts=5
+  }
   push_config {push_endpoint = google_eventarc_trigger.trigger_video_handler.id}
   depends_on = [ 
     google_eventarc_trigger.trigger_video_handler,
