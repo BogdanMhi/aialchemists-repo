@@ -33,10 +33,12 @@
             <form id="uploadForm" enctype="multipart/form-data">
                 <input type="submit" value="Submit" class="submit-button"> <!-- Submit button -->
             </form>
-            <% if ( admin ) { %>
-                <button id="exposeStatisticsButton" class="start-conversation-button">Expose Statistics</button>
-            <% } %>
-            <button id="newConversationButton" class="start-conversation-button">Start a New Conversation</button>
+            <div class="buttons-section">
+                <button id="newConversationButton" class="start-conversation-button">Start a New Conversation</button>
+                <% if ( admin ) { %>
+                    <button id="exposeStatisticsButton" class="start-conversation-button">Expose Statistics</button>
+                <% } %>
+            </div>
         </div>
 
         <div id="loadingScreen" class="loading-screen" style="display: none;">

@@ -6,7 +6,7 @@ const crypto = require('crypto');
 
 const projectId = 'docai-accelerator';
 const databaseId = 'ai-alchemists-db';
-const bucketId = 'alchemist_ingestion_data_0d0ec9';
+const bucketId = 'alchemist_ingestion_data_707f0d';
 const historyCollection = 'history';
 const storage = new Storage({ projectId });
 const pubsub = new PubSub({ projectId });
