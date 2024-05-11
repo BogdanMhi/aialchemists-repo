@@ -111,7 +111,7 @@ def stats_generator(event, context):
     print(output_model)
     print(type(output_model))
     try:
-        url = 'https://app-adwexujega-ey.a.run.app/stats'
+        url = 'https://web-app-adwexujega-ey.a.run.app/stats'
         data = {
             'response': output_model,
             'uuid': uuid,

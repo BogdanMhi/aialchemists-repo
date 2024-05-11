@@ -140,7 +140,7 @@ def text_processor(cloud_event):
     output_model = result['output']
 
     try:
-        url = 'https://app-adwexujega-ey.a.run.app/model'
+        url = 'https://web-app-adwexujega-ey.a.run.app/model'
         data = {
             'response': str(output_model).replace('"',"'"),
             'uuid': uuid
