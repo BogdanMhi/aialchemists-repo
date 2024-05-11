@@ -1,1 +1,1 @@
-# aialchemists-repo
+# AI Alchemists

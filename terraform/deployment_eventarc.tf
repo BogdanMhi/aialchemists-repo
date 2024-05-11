@@ -13,6 +13,7 @@ resource "google_service_account" "eventarc_service_account" {
   depends_on = [ google_project_service.eventarc_api ]
 }
 
+
 # Grant permission to receive Eventarc events
 resource "google_project_iam_member" "eventreceiver" {
   project = var.project
