@@ -19,9 +19,9 @@ resource "null_resource" "deploy_web_app" {
   provisioner "local-exec" {
     command = "gcloud run deploy ${var.web_app_source_name} --region=${var.region} --source=${var.web_app_source_path} --concurrency=80 --ingress=all --max-instances=100 --timeout=3600s --cpu=4 --memory=8Gi --allow-unauthenticated --service-account=${google_service_account.eventarc_service_account.email}"
   }
-  depends_on = [
-    google_artifact_registry_repository.cloud_run_repository
-  ]
+  #depends_on = [
+  #  google_artifact_registry_repository.cloud_run_repository
+  #]
 }
 
 # document_handler
