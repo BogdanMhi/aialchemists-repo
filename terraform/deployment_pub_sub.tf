@@ -13,13 +13,13 @@ resource "google_project_service" "pubsub_api" {
 #  permissions = ["pubsub.subscriptions.get", "pubsub.subscriptions.consume"]
 #}
 
-
 ## document_handler
 resource "google_pubsub_topic" "document_handler_function" {
     name = var.document_handler_topic_name
     message_storage_policy { allowed_persistence_regions = [ var.region ] }
 }
 
+/*
 ## document_handler subscription
 resource "google_pubsub_subscription" "document_handler_sub" {
   name = var.document_handler_sub_name
@@ -44,12 +44,13 @@ resource "google_pubsub_subscription" "document_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.document_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_document_handler.name]
-#  depends_on = [google_pubsub_subscription.document_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "document_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.document_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_document_handler.name]
+  depends_on = [google_pubsub_subscription.document_handler_sub]
+}
+*/
 
 ## format_classifier
 resource "google_pubsub_topic" "format_classifier_function" {
@@ -63,6 +64,7 @@ resource "google_pubsub_topic" "image_handler_function" {
     message_storage_policy { allowed_persistence_regions = [ var.region ] }
 }
 
+/*
 ## image_handler subscription
 resource "google_pubsub_subscription" "image_handler_sub" {
   name = var.image_handler_sub_name
@@ -87,12 +89,13 @@ resource "google_pubsub_subscription" "image_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.image_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_image_handler.name]
-#  depends_on = [google_pubsub_subscription.image_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "image_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.image_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_image_handler.name]
+  depends_on = [google_pubsub_subscription.image_handler_sub]
+}
+*/
 
 ## iot_handler
 resource "google_pubsub_topic" "iot_handler_function" {
@@ -118,6 +121,7 @@ resource "google_pubsub_topic" "video_handler_function" {
     message_storage_policy { allowed_persistence_regions = [ var.region ] }
 }
 
+/*
 ## video_handler subscription
 resource "google_pubsub_subscription" "video_handler_sub" {
   name = var.video_handler_sub_name
@@ -142,9 +146,10 @@ resource "google_pubsub_subscription" "video_handler_sub" {
 }
 
 ## Give Granular Permissions on Pub/Sub Subscriptions
-#resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
-#  subscription = google_pubsub_subscription.video_handler_sub.name
-#  role    = "roles/pubsub.subscriber"
-#  members = [google_eventarc_trigger.trigger_video_handler.name]
-#  depends_on = [google_pubsub_subscription.video_handler_sub]
-#}
+resource "google_pubsub_subscription_iam_binding" "video_handler_get_pubsub" {
+  subscription = google_pubsub_subscription.video_handler_sub.name
+  role    = "roles/pubsub.subscriber"
+  members = [google_eventarc_trigger.trigger_video_handler.name]
+  depends_on = [google_pubsub_subscription.video_handler_sub]
+}
+*/

@@ -103,7 +103,7 @@ def stats_generator(event, context):
         Current conversation: {history}
         Human: Given the following information: {input} please focus on the main subjects and terms that are repeated or hold significant importance in the medical context that are related to medical field and are not generic or have a common understanding apart from the medical field. 
         Return the most frequent medical keywords formatted in a list of dictionaries with two keys: keywords and frequency where the values will represent the name of the keyword and the freqency of the keyword in the input. 
-        Return only the final list respecting the structure "[output]" without any additional text.
+        Return only the final list respecting the structure "[output]" without any additional text. All the words will be in title case.
     """
     prompt = PromptTemplate(input_variables=["input"], template=template)
     conversation = ConversationChain(prompt=prompt, llm=llm, verbose=True)
@@ -111,7 +111,7 @@ def stats_generator(event, context):
     print(output_model)
     print(type(output_model))
     try:
-        url = 'https://app-adwexujega-ey.a.run.app/stats'
+        url = 'https://web-app-adwexujega-ey.a.run.app/stats'
         data = {
             'response': output_model,
             'uuid': uuid,

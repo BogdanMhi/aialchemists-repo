@@ -4,7 +4,7 @@ resource "google_project_service" "enable_artifact_registry_api" {
   project = var.project
 }
 
-
+/*
 # Create an Artifact repository
 resource "google_artifact_registry_repository" "cloud_run_repository" {
   project       = var.project
@@ -14,3 +14,4 @@ resource "google_artifact_registry_repository" "cloud_run_repository" {
   description   = "Repository for cloud run"
   depends_on = [google_project_service.enable_artifact_registry_api]
 }
+*/
