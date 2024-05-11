@@ -5,7 +5,7 @@ resource "google_project_service" "enable_artifact_registry_api" {
 }
 
 /*
-# Create an Artifact repository
+# Create an Artifact repository 
 resource "google_artifact_registry_repository" "cloud_run_repository" {
   project       = var.project
   location      = var.region
