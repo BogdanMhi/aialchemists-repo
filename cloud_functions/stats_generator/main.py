@@ -9,7 +9,7 @@ from google.cloud import bigquery
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import ConversationChain
-from utilities.settings import PROJECT_ID, FIRESTORE_DATABASE_ID, AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, HISTORY_COLLECTION, BIGQUERY_DATABASE_ID
+from utilities.settings import *
 
 bq_client = bigquery.Client(project=PROJECT_ID)
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -111,7 +111,7 @@ def stats_generator(event, context):
     print(output_model)
     print(type(output_model))
     try:
-        url = 'https://web-app-adwexujega-ey.a.run.app/stats'
+        url = f'https://{FE_APP_NAME}-adwexujega-ey.a.run.app/stats'
         data = {
             'response': output_model,
             'uuid': uuid,

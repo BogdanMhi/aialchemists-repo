@@ -158,6 +158,7 @@ resource "google_cloudfunctions_function" "stats_generator" {
     HISTORY_COLLECTION = "history"
     AZURE_OPENAI_API_KEY = var.text_processor_azure_api_key
     AZURE_OPENAI_ENDPOINT = var.text_processor_azure_endpoint
+    FE_APP_NAME = var.web_app_source_name
   }
 
   depends_on = [
@@ -213,6 +214,7 @@ resource "google_cloudfunctions_function" "text_processor" {
     BIGQUERY_DATABASE_ID = "${var.project}.${var.bigquery_database_name}.${var.bigquery_database_table}"
     AZURE_OPENAI_API_KEY = var.text_processor_azure_api_key
     AZURE_OPENAI_ENDPOINT = var.text_processor_azure_endpoint
+    FE_APP_NAME = var.web_app_source_name
   }
 
   depends_on = [

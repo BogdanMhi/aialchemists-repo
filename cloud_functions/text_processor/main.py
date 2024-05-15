@@ -9,7 +9,7 @@ from langchain.agents import create_tool_calling_agent, Tool, AgentExecutor
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, PROJECT_ID, FIRESTORE_DATABASE_ID, BIGQUERY_DATABASE_ID
+from utilities.settings import *
 import requests
 
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -140,7 +140,7 @@ def text_processor(cloud_event):
     output_model = result['output']
 
     try:
-        url = 'https://web-app-adwexujega-ey.a.run.app/model'
+        url = f'https://{FE_APP_NAME}-adwexujega-ey.a.run.app/model'
         data = {
             'response': str(output_model).replace('"',"'"),
             'uuid': uuid

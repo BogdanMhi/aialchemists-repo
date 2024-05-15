@@ -13,3 +13,6 @@ AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
 
 # BigQuery
 BIGQUERY_DATABASE_ID = os.environ.get("BIGQUERY_DATABASE_ID")
+
+# FE
+FE_APP_NAME = os.environ.get("FE_APP_NAME")
