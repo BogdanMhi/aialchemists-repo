@@ -64,8 +64,19 @@ function createChart(data){
     // Sort data based on the frequency
     data.sort((a, b) => b.frequency - a.frequency);
     
-    const keywords = data.map(item => item.keyword);
-    const frequencies = data.map(item => item.frequency);
+    // Sort data based on the frequency
+    data.sort((a, b) => b.frequency - a.frequency);
+    
+    const chartData = data.map(item => {
+        const keyName = item.keyword ? 'keyword' : 'keywords';
+        return {
+            [keyName]: item[keyName] || item['keywords'],
+            frequency: item.frequency
+        };
+    });
+
+    const keywords = chartData.map(item => item.keyword || item.keywords);
+    const frequencies = chartData.map(item => item.frequency);
     
     // Generate colors using Chroma.js color scale
     const colorScale = chroma.scale(['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#4A90E2', '#F5511D', '#10A674']).mode('lch').colors(keywords.length);
