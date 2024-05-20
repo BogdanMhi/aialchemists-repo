@@ -62,7 +62,7 @@ def video_handler(pubsub_message):
         object_path = 'video.mp4'
         filters = yt_obj.streams.filter(progressive=True, file_extension='mp4')
         filters.get_highest_resolution().download(output_path="/tmp/", filename='video.mp4')
-    model = whisper.load_model("small", download_root="model/whisper/")
+    model = whisper.load_model("small", download_root="./model/whisper/")
     result = model.transcribe(f"/tmp/{object_path}", fp16=False)
     transcript = json.dumps({
         "statement": message_data["statement"],
