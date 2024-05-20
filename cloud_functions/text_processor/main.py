@@ -9,7 +9,7 @@ from langchain.agents import create_tool_calling_agent, Tool, AgentExecutor
 from langchain_openai import AzureChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_community.tools.pubmed.tool import PubmedQueryRun
-from utilities.settings import AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, PROJECT_ID, FIRESTORE_DATABASE_ID, BIGQUERY_DATABASE_ID
+from utilities.settings import *
 import requests
 
 llm = AzureChatOpenAI(deployment_name="gpt-4", model_name="gpt-4",
@@ -104,6 +104,7 @@ def text_processor(cloud_event):
         template = """The following is a friendly conversation between a human and an AI.
                     The AI is a medical engine with accurate and up-to-date medical knowledge that will only answer to medical related questions.
                     The AI will always answer to greetings and the questions about previous inquiries/requests addressed by the human.
+                    The non-medical questions/requests are out-of-scope.
                     If the question is abstract or ambiguous, the AI will ask the human for more context.
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
                     The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
@@ -117,6 +118,7 @@ def text_processor(cloud_event):
         template = """The following is a friendly conversation between a human and an AI. 
                     The AI is a medical engine with accurate and up-to-date medical knowledge that will only answer to medical related questions.
                     The AI will always answer to greetings and the questions about previous inquiries/requests addressed by the human.
+                    The non-medical questions/requests are out-of-scope.
                     If the question is abstract or ambiguous, the AI will ask the human for more context.
                     The AI will use tools to look for an answer ONLY if it NEEDS to.
                     The AI's final answer will contain terms that can be understood by any human and will contain 2 sentences, plus one medical article or research that addresses the query.
@@ -140,7 +142,7 @@ def text_processor(cloud_event):
     output_model = result['output']
 
     try:
-        url = 'https://web-app-adwexujega-ey.a.run.app/model'
+        url = f'https://{FE_APP_NAME}-adwexujega-ey.a.run.app/model'
         data = {
             'response': str(output_model).replace('"',"'"),
             'uuid': uuid
